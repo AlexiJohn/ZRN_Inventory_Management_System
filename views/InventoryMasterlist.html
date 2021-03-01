@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Inventory</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+</head>
+<body> 
+    <nav style="background-color:#274D5A">
+        <div class="nav-wrapper">
+            <a class="brand-logo center" id="a" >Inventory</a>
+        </div>
+    </nav>
+
+        <table class="highlight centered">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Current Inventory</th>
+                    <th>Starting Inventory</th>
+                    <th>Offtake</th>
+                    <th>Ending Inventory</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            <tbody id="tbody_inventory">
+            </tbody>
+            </thead>
+        </table>
+
+    <script type="text/javascript" src="js/materialize.min.js"></script>
+    <script src="./DOM/InventoryMasterList.js"></script>
+    <script src="./DOM/init.js"></script>
+</body>
+</html>
