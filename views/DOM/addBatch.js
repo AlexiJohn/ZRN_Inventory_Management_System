@@ -1,6 +1,8 @@
 const electron = require('electron');
 const ipc = electron.ipcRenderer;
 
+const $ = require( "jquery" );
+
 const form = document.querySelector('form');
 form.addEventListener('submit', submitForm);
 

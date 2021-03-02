@@ -13,8 +13,6 @@ let addBatch;
 let mq_result;
 let pq_result;
 
-BrowserWindow.on
-
 // Listen for app to be ready
 app.on('ready', function(){
     //create new Window
@@ -88,6 +86,7 @@ function createaddProduct(){
     
     getManufacturers();
 
+}
 
 function createaddBatch(){
 
@@ -225,7 +224,7 @@ if(process.platform == 'darwin'){
 }
 
 // Add developer tools item if not in prod
-if(process.env.NODE_ENV !== 'production'){
+if(process.env.NODE_ENV !== 'production') {
     mainMenuTemplate.push({
         label: 'Developer Tools',
         submenu:[
