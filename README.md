@@ -12,3 +12,7 @@ The ZRN Inventory Management System is an IMS developed for the vaccine distribu
 ## System Requirements
 1. Install node: https://nodejs.org/en/download/
 2. Install git: https://git-scm.com/downloads
+
+## Fix for ER_NOT_SUPPORTED_AUTH_MODE:
+https://stackoverflow.com/questions/44946270/er-not-supported-auth-mode-mysql-server
+
