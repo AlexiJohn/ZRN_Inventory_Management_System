@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <title>Inventory</title>
+    <link href="css/google-icon.css" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
+    <link href="css/zrn_custom.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+</head>
+
+<body>
+    <div class="navbar-fixed">
+
+        <nav class="zrn-background">
+            <div class="nav-wrapper">
+                <div class="brand-logo center s5">
+                    <img class="fix-logo" src="images/ZRN_logo_small_white.svg" alt="ZRN_Logo">
+                    <h4 class="valign-wrapper" style="display: inline;">Inventory</h4>
+                </div>
+
+                <div id="back_button" class="col s1">
+                    <a href="#" class="">
+                        <i class="fix-navbar material-icons white-text">
+                        arrow_back
+                        </i>
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+    </div>
+
+    <div class="container">
+        <div class="row zrn-color-font">
+            <div class="col s8">
+                <h4>
+                    Inventory Details
+                </h4>
+            </div>
+            <div class="col s4">
+                <button class="right mt-25 btn waves-effect waves-light blue darken-4">
+                    Delete Stock
+                </button>
+                <button id="btn_edit" data-target="edit_batch" class="btn modal-trigger right mt-25 mr-5 btn waves-effect waves-light blue darken-4">
+                    Edit Stock
+                </button>
+            </div>
+        </div>
+        <hr>  
+    </div>
+    
+    <div class="container bold">
+
+        
+        <div class="row zero-mp">
+            <div class="container col s3">
+                <h6 class="bold">Product</h6>
+            </div>
+            <div class="container col s3">
+                <h6>Manufacturer</h6>
+            </div>
+            <div class="container col s3">
+                <h6>Batch Number</h6>
+            </div>
+        </div>
+        <div class="row">
+            <div class="container col s3">
+                <h7 id="id_product">Product</h7>
+            </div>
+            <div class="container col s3">
+                <h7 id="id_manufacturer">Manufacturer</h7>
+            </div>
+            <div class="container col s3">
+                <h7 id="id_batch_no">Batch Number</h7>
+            </div>
+        </div>
+    
+
+        <div class="row zero-mp">
+            <div class="container col s3">
+                <h6>Delivery Date</h6>
+            </div>
+            <div class="container col s3">
+                <h6>Expiration Date</h6>
+            </div>
+        </div>
+        <div class="row">
+            <div class="container col s3">
+                <h7 id="id_delivery_date">Delivery Date</h7>
+            </div>
+            <div class="container col s3">
+                <h7 id="id_expiration_date">Expiration Date</h7>
+            </div>
+        </div>
+
+        <div class="row zero-mp">
+            <div class="container col s3">
+                <h6>Unit Price</h6>
+            </div>
+            <div class="container col s3">
+                <h6>Quantity</h6>
+            </div>
+            <div class="container col s3">
+                <h6>Threshold</h6>
+            </div>
+        </div>
+        <div class="row">
+            <div class="container col s3">
+                <h7 id="id_unit_price">Unit Price</h7>
+            </div>
+            <div class="container col s3">
+                <h7 id="id_quantity">Quantity</h7>
+            </div>
+            <div class="container col s3">
+                <h7 id="id_threshold">Threshold</h7>
+            </div>
+        </div>
+
+        <div class="row zero-mp">
+            <div class="container col s3">
+                <h6>Purchase Order</h6>
+            </div>
+            <div class="container col s3">
+                <h6>Supplier Delivery Receipt</h6>
+            </div>
+        </div>
+        <div class="row">
+            <div class="container col s3">
+                <h7 id="id_purchase_order">null</h7>
+            </div>
+            <div class="container col s3">
+                <h7 id="id_SDR">null</h7>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL STRUCTURE -->
+    <div id="edit_batch" class="modal">
+        <div class="modal-content">
+          <h5 class="bold">Edit Batch</h5>
+          <form id = 'formbatch'>
+            <div>
+
+                <div class="input-field">
+                <label for="product_name">Product Name</label>
+                <input disabled id="product_name" name="product_name" type="text"/>
+                </div>
+
+                <div class="input-field">
+                <label for="batch_no" >Batch Number</label>
+                <input id="batch_no" name="batch_no" type="text"/>
+                </div>
+
+                <div class="input-field">
+                <label for="manufacturer_name">Manufacturer Name</label>
+                <input disabled id="manufacturer_name" name="manufacturer_name" type="text"/>
+                </div>
+
+                <div class="input-field">
+                <label for="delivery_Date">Delivery Date</label>
+                <input id="delivery_Date" class="datepicker" name="delivery_Date" type="text"/>
+                </div>
+
+                <div class="input-field">
+                <label for="expiration_Date">Expiration Date</label>
+                <input id="expiration_Date" class="datepicker" name="expiration_Date" type="text"/>
+                </div>
+
+                <div class="input-field">
+                <label for="quantity">Quantity</label>
+                <input id="quantity" name="quantity" type="number"/>
+                </div>
+
+                <div class="input-field">
+                <label for="unit_price">Price</label>
+                <input id="unit_price" name="unit_price" type="number" step="any"/>
+                </div>
+
+                <div class="input-field"> 
+                <label for="threshold">Threshold</label>
+                <input id="threshold" name="threshold" type="number"/>
+                </div>
+
+            </div>
+        </form>
+        </div>
+        <div class="modal-footer">
+            <button id="addBatch" type="submit" class="modal-close waves-effect waves-light btn">Add Product</button>
+        </div>
+    </div>
+
+    
+
+
+
+
+
+
+
+<script src="./DOM/inventoryDetails.js"></script>
+<script type="text/javascript" src="js/materialize.min.js"></script>
+<script src="./DOM/init.js"></script>
+</body>
+</html>

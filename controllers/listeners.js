@@ -1,6 +1,10 @@
 const ipc = require('electron').ipcMain;
 var { webContents } = require('electron');
+var remote = require('electron').remote;
 const window = require('electron').BrowserWindow;
+
+const url = require('url');
+const path = require('path');
 
 var db = require('./database');
 
@@ -68,8 +72,6 @@ ipc.on('batch:add', function(event,data){
         
         var batch_data = [data];
 
-        console.log(batch_data);
-
         // INSERT Query for batch
         db.query(batch_query, batch_data, function(err,result){
             if (err) throw err;
@@ -134,3 +136,78 @@ ipc.on('batch:addNewBatch', function(event,data){
     }
 });
 
+ipc.on('inventory:viewBatch', function(event,data){
+
+    var batch_query = 'SELECT * FROM batch WHERE lot_no = ?';
+    var product_query = 'SELECT * from product WHERE product_ID = ?';
+    var manufacturer_query = 'SELECT * FROM manufacturer WHERE manufacturer_ID = ?';
+    var lot_no = data;
+    var current_window = window.getFocusedWindow();
+    
+    var batch_data;
+    var prod_data;
+    var manu_data;
+    var get_data;
+
+    current_window.loadFile('views/inventoryDetails.html');
+
+    db.query(batch_query, lot_no, function(err,result){
+
+        if (err) throw err;
+        batch_data = result[0];
+        p_query();
+    });
+
+    function p_query(){
+        db.query(product_query, batch_data.product_ID, function(err, result){
+
+            if (err) throw err;
+            prod_data = result;
+            m_query();
+            
+        });
+    }
+
+    function m_query(){
+        db.query(manufacturer_query, batch_data.manufacturer_ID, function(err, result){
+            
+            if (err) throw err;
+            manu_data = result;
+            get_data = [batch_data,prod_data,manu_data];
+
+            current_window.webContents.on('did-finish-load', function(){
+                current_window.webContents.send('inventory:receiveBatch', get_data);
+            });
+        });
+    }
+
+    
+});
+
+
+ipc.once('inventory:updateBatch', function(event,data){
+
+    var current_window = window.getFocusedWindow();
+
+    var batch_query = "UPDATE batch SET batch_no = ?, delivery_date = ?, expiration_Date = ?, quantity = ?, unit_price = ?, threshold = ? WHERE lot_no = ?";
+
+    db.query(batch_query, data, function(err,result){
+        if (err) throw err;
+
+        current_window.webContents.on('did-finish-load', function(){
+            current_window.webContents.send('inventory:detailsReload', data);
+            
+        });
+
+        current_window.reload();
+    });
+    
+});
+
+ipc.on('go-back', function(event,data){
+
+    var current_window = window.getFocusedWindow();
+
+    current_window.webContents.goBack();
+
+});

@@ -1,21 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
     <title>Inventory</title>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="css/google-icon.css" rel="stylesheet">
     <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
+    <link href="css/zrn_custom.css" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
 </head>
-<body> 
-    <nav style="background-color:#274D5A">
-        <div class="nav-wrapper">
-            <a class="brand-logo center" id="a" >Inventory</a>
-        </div>
-    </nav>
+<body>
+    
+    <div class="navbar-fixed">
+        <nav class="zrn-background">
+            <div class="nav-wrapper">
+                <div href="#!" class="brand-logo center">
+                    <img class="fix-logo" src="images/ZRN_logo_small_white.svg" alt="ZRN_Logo">
+                    <h4 class="valign-wrapper" style="display: inline;">Inventory</h4>
+                </div>
+            </div>
+        </nav>
+    </div>
 
-        <table class="highlight centered">
-            <thead>
+    <div class="container">
+        <table class="highlight centered mt">
+            <thead class="zrn-background zrn-white-font round-thead">
                 <tr>
                     <th>Product</th>
                     <th>Current Inventory</th>
@@ -25,10 +34,11 @@
                     <th>Status</th>
                     <th>Action</th>
                 </tr>
-            <tbody id="tbody_inventory">
-            </tbody>
             </thead>
+            <tbody id="tbody_inventory" >
+            </tbody>
         </table>
+    </div>
 
     <script type="text/javascript" src="js/materialize.min.js"></script>
     <script src="./DOM/InventoryMasterList.js"></script>

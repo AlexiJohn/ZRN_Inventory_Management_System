@@ -8,7 +8,7 @@ const {app, BrowserWindow, Menu, ipcMain} = electron;
 var db = require('./database');
 const { isBuffer } = require('util');
 
-let InventoryMasterlist;
+let mainWindow;
 let addBatch;
 let mq_result;
 let pq_result;
@@ -16,7 +16,7 @@ let pq_result;
 // Listen for app to be ready
 app.on('ready', function(){
     //create new Window
-    InventoryMasterlist = new BrowserWindow({
+    mainWindow = new BrowserWindow({
         
         // Allows Node modules to load in your views/html files
         webPreferences: {
@@ -26,15 +26,16 @@ app.on('ready', function(){
 
     });
     // Load HTML into window
-    InventoryMasterlist.maximize();
+    mainWindow.maximize();
 
-    InventoryMasterlist.loadURL(url.format({
-        pathname: path.join(__dirname, '../views/InventoryMasterlist.html'),
-        protocol: 'file:',
-        slashes: true
+    mainWindow.loadURL(url.format({
+            pathname: path.join(__dirname, '../views/login.html'),
+            protocol: 'file:',
+            slashes: true
     }));
+    
     //Quit app when closed
-    InventoryMasterlist.on('closed', function(){
+    mainWindow.on('closed', function(){
         app.quit();
     });
 
@@ -43,11 +44,6 @@ app.on('ready', function(){
     
     // Insert Menu
     Menu.setApplicationMenu(mainMenu);
-
-    //For Showing tables
-    getInventory();
-
-    console.log(InventoryMasterlist.id);
 
 });
 
@@ -76,11 +72,7 @@ function createaddProduct(){
     // Garbage collection handle
     addBatch.on('close', function(){
         addBatch = null;
-        InventoryMasterlist.loadURL(url.format({
-            pathname: path.join(__dirname, '../views/InventoryMasterlist.html'),
-            protocol: 'file:',
-            slashes: true
-        }));
+        reloadInventoryTables();
         getInventory();
     });
     
@@ -109,17 +101,21 @@ function createaddBatch(){
     // Garbage collection handle
     addBatch.on('close', function(){
         addNewBatch = null;
-        InventoryMasterlist.loadURL(url.format({
-            pathname: path.join(__dirname, '../views/InventoryMasterlist.html'),
-            protocol: 'file:',
-            slashes: true
-        }));
+        reloadInventoryTables();
         getInventory();
     });
 
     getProduct();
     getManufacturers();
     
+}
+
+function reloadInventoryTables(){
+    mainWindow.loadURL(url.format({
+        pathname: path.join(__dirname, '../views/InventoryMasterlist.html'),
+        protocol: 'file:',
+        slashes: true
+    }));
 }
 
 // QUERIES //
@@ -154,28 +150,31 @@ function getProduct(){
 
 function getInventory(){
 
-    var product_batch_query = 'SELECT b.product_ID, p.product_name, SUM(b.quantity) AS quantity_sum FROM batch b, product p, manufacturer m WHERE p.product_ID = b.product_ID GROUP BY b.product_ID ORDER BY p.product_name ASC'
+    var product_batch_query = 'SELECT b.product_ID, p.product_name, SUM(b.quantity) AS quantity_sum FROM batch b, product p WHERE p.product_ID = b.product_ID GROUP BY b.product_ID ORDER BY p.product_name ASC'
     var product_batch_no_query = 'SELECT b.lot_no, b.product_ID, b.batch_no, b.quantity FROM batch b, product p, manufacturer m WHERE b.product_ID = p.product_ID AND m.manufacturer_ID = b.manufacturer_ID ORDER BY p.product_ID;'
 
     db.query(product_batch_query, function(err,result){
         if (err) throw err;
         
-        InventoryMasterlist.webContents.on('did-finish-load', function(){
-            InventoryMasterlist.webContents.send('inventory:getInventory:product', result);
+        mainWindow.webContents.on('did-finish-load', function(){
+            mainWindow.webContents.send('inventory:getInventory:product', result);
         });
 
+    
     });
 
     db.query(product_batch_no_query, function(err,result){
         if (err) throw err;
 
-        InventoryMasterlist.webContents.on('did-finish-load', function(){
-            InventoryMasterlist.webContents.send('inventory:getInventory:batch', result);
+        mainWindow.webContents.on('did-finish-load', function(){
+            mainWindow.webContents.send('inventory:getInventory:batch', result);
         });
     });
 
 }
 
+
+// LISTENERS //
 ipcMain.on('batch:updateManuSelect',function(event,data){
     
     var product_query = 'SELECT manufacturer_ID FROM product WHERE product_ID = ?' 
@@ -186,6 +185,11 @@ ipcMain.on('batch:updateManuSelect',function(event,data){
         addBatch.webContents.send('batch:getManuSelect', result);
     });
 
+});
+
+ipcMain.on('login', function(){
+    reloadInventoryTables();
+    getInventory();
 });
 
 // Create menu template

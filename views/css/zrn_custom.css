@@ -1,0 +1,78 @@
+
+.fix-logo {
+    height: 32px;
+    margin-top: 10px;
+}
+
+.fix-navbar {
+    margin-left: 20px;
+}
+.round-thead table th:first-child{
+  border-radius:20px 0 0 20px;
+}
+
+.round-thead table th:last-child{
+  border-radius:0 20px 20px 0;
+}
+
+.bold h6{
+  font-weight: bold;
+}
+
+.mt{
+    margin-top: 10px;
+}
+
+.mt-25 {
+    margin-top: 25px;
+}
+
+.mr-5 {
+    margin-right: 5px;   
+}
+
+.zrn-background{
+    background-color: #061D54;
+}
+
+.zrn-white-font{
+    color: white;
+}
+
+.zrn-color-font{
+    color: #061D54;
+}
+
+.zero-mp {
+    margin: 0px 0px 0px 0px;
+    padding: 0px 0px 0px 0px;
+}
+
+#edit_batch.modal {
+    width: 75% !important ; 
+    height: 75% !important ;
+}
+
+/* Scrollable Tbody */
+
+thead, tbody tr {
+  display:table;
+  width:100%;
+  table-layout:fixed;
+}
+
+/* tbody {
+  display:block;
+  overflow:auto;
+}
+thead, tbody tr {
+  display:table;
+  width:100%;
+  table-layout:fixed;
+}
+thead {
+  width: calc( 100% - 1em )
+}
+table {
+  width:100%;
+} */

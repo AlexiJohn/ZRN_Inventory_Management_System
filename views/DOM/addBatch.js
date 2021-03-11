@@ -1,5 +1,6 @@
 const electron = require('electron');
 const ipc = electron.ipcRenderer;
+const Joi = require('joi');
 
 const $ = require( "jquery" );
 
@@ -10,6 +11,28 @@ var check = document.querySelector('#new_manu');
 check.addEventListener("click", changeInput);
 
 var manufacturer_name;
+
+/* const schema = Joi.object({
+    product : Joi.string()
+        .alphanum()
+        .max(30)
+        .trim()
+        .required(),
+    batch : Joi.string()
+        .alphanum()
+        .max(10)
+        .required(),
+    deliver_date : Joi.date()
+        .required(),
+    expiration_date : Joi.date()
+        .required(),
+    quantity : Joi.number()
+        .required(),
+    price : Joi.number()
+        .required(),
+    threshold : Joi.number()
+        .max(Joi.ref('quantity'))
+}); */
 
 function changeInput(){
     if (check.checked == false){
@@ -46,9 +69,31 @@ function submitForm(e){
     var data = [product_name, manufacturer_name, batch_no, 
         delivery_Date, expiration_Date, quantity,
         unit_price, threshold];
-
-    console.log(data);
     
+    var schema_data = {
+
+        product : product_name,
+        batch : batch_no,
+        deliver_date : delivery_Date,
+        expiration_date : expiration_Date,
+        quantity : quantity,
+        price : unit_price,
+        threshold : threshold
+
+    };
+
+    send_data(data);
+
+    /* if (schema.validate(schema_data).error == null){
+        console.log("it works");
+    } else {
+        console.log(schema.validate(schema_data).error);
+    } */
+    
+}
+
+function send_data (data){
+
     if (check.checked == true){
         ipc.send('batch:add', data);
         form.reset();
@@ -56,7 +101,7 @@ function submitForm(e){
         ipc.send('batch:existingManu',data);
         form.reset();
     }
-    
+
 }
 
 function checkedManu(){
@@ -90,3 +135,4 @@ ipc.on('batch:getManuList', function(event,data){
     } 
 
 });
+
