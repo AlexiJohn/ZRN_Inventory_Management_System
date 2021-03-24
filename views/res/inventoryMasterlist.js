@@ -7,7 +7,180 @@ var product;
 var batch;
 var tbody = document.getElementById('tbody_inventory');
 
+var manufacturer_name;
+
+$(document).ready(function() {
+    M.updateTextFields();
+});
+
+var check = document.querySelector('#new_manu');
+check.addEventListener("click", changeInput);
+
+const formProduct = document.querySelector('#formproduct');
+formProduct.addEventListener('submit', submitFormProduct);
+
+const formBatch = document.querySelector('#formbatch');
+formBatch.addEventListener('submit', submitFormBatch);
+
+// NEW PRODUCT
+
+function submitFormProduct(e){
+
+    e.preventDefault();
+
+    // Get values of the form
+    var product_name = document.querySelector('#product_name').value;
+
+    checkedManu();
+
+    var batch_no = document.querySelector('#batch_no').value;
+    var delivery_Date = document.querySelector('#delivery_Date').value;
+    var expiration_Date = document.querySelector('#expiration_Date').value;
+    var quantity = document.querySelector('#quantity').value;
+    var unit_price = document.querySelector('#unit_price').value;
+    var threshold = document.querySelector('#threshold').value;
+
+    var data = [product_name, manufacturer_name, batch_no, 
+        delivery_Date, expiration_Date, quantity,
+        unit_price, threshold];
+
+    send_data(data);
+    
+}
+
+function send_data (data){
+
+    if (check.checked == true){
+        ipc.send('batch:add', data);
+        formProduct.reset();
+        formBatch.reset();
+    } else {
+        ipc.send('batch:existingManu',data);
+        formProduct.reset();
+        formBatch.reset();
+    }
+
+}
+
+function changeInput(){
+    if (check.checked == false){
+        var input_manu = document.querySelector("#manufacturer_name");
+        input_manu.style.display = "none";
+
+        var selection_manu = document.querySelector("#selection_manu");
+        selection_manu.style.display = "block";
+    } else {
+        var input_manu = document.querySelector("#manufacturer_name");
+        input_manu.style.display = "block";
+
+        var selection_manu = document.querySelector("#selection_manu");
+        selection_manu.style.display = "none";
+    }
+}
+
+function checkedManu(){
+
+    if (check.checked == true){
+        manufacturer_name = document.querySelector('#manufacturer_name').value;
+    } else {
+        manufacturer_name = document.getElementById('select_manu').selectedOptions[0].value;
+        console.log(manufacturer_name);
+    }
+
+}
+
+// NEW BATCH
+
+function submitFormBatch(e){
+
+    e.preventDefault();
+
+    // Get values of the form
+    var product_ID = document.getElementById('b_select_product').selectedOptions[0].value;
+
+    manufacturer_name = document.getElementById('b_select_manu').selectedOptions[0].value;
+
+    var batch_no = document.querySelector('#b_batch_no').value;
+    var delivery_Date = document.querySelector('#b_delivery_Date').value;
+    var expiration_Date = document.querySelector('#b_expiration_Date').value;
+    var quantity = document.querySelector('#b_quantity').value;
+    var unit_price = document.querySelector('#b_unit_price').value;
+    var threshold = document.querySelector('#b_threshold').value;
+
+    var data = [product_ID, manufacturer_name, batch_no, 
+        delivery_Date, expiration_Date, quantity,
+        unit_price, threshold];
+
+    console.log(data);
+    
+    ipc.send('batch:addNewBatch', data);
+    formBatch.reset();
+    
+}
+
+ipc.on('batch:getManuList', function(event,data){
+
+    var manu_list = data;
+
+    for (i = 0; i < manu_list.length; i++) {
+
+        var row_mn = data[i];
+        var select_mn = document.getElementById('b_select_manu');
+        var option_mn = document.createElement("option");
+        option_mn.value = row_mn.manufacturer_ID;
+        option_mn.innerText = row_mn.manufacturer_name;
+        option_mn.setAttribute('disabled',true); 
+
+        select_mn.appendChild(option_mn);
+
+        instances_init();
+        
+    } 
+
+});
+
+ipc.on('batch:getProductList', function(event,data){
+
+    var prod_list = data;
+
+    for (i = 0; i < prod_list.length; i++){
+
+        var row_p = prod_list[i];
+        var select_p = document.getElementById('b_select_product');
+        var option_p = document.createElement("option");
+        option_p.value = row_p.product_ID;
+        option_p.innerText = row_p.product_name;
+
+        select_p.appendChild(option_p);
+
+        instances_init();
+
+    }
+});
+
+ipc.on('batch:getManuList', function(event,data){
+
+    var manu_list = data;
+
+    for (i = 0; i < manu_list.length; i++) {
+
+        var row_m = data[i];
+        var select_m = document.getElementById('select_manu');
+        var option_m = document.createElement("option");
+        option_m.value = row_m.manufacturer_ID;
+        option_m.innerText = row_m.manufacturer_name; 
+
+        select_m.appendChild(option_m);
+        var elems = document.querySelectorAll('select');
+        var options = {};
+        var instances = M.FormSelect.init(elems, options);
+        
+    } 
+
+});
+
 //shows batches' tables
+
 $(document).on('click','.view-product', function(event){
     
     var get_tr_id = event.target.getAttribute('name') + "_batch";
@@ -79,7 +252,9 @@ ipc.on('inventory:getInventory:product', function(event,data){
     var current_row;
     product = data;
 
-    tbody.textContent = "";
+    console.log(product, 'here');
+    
+    tbody.innerHTML = "";
 
     for ( i=0; i < product.length; i++){
         
@@ -179,3 +354,32 @@ ipc.on('inventory:getInventory:batch', function(event, data){
     };
 
 });
+
+
+// Dynamically update product select and manufacturer select
+$('#b_select_product').on('change',function(event){
+
+    var select_product_ID = $("#b_select_product option:selected")[0].value;
+
+    if (select_product_ID !== ""){
+        ipc.send('batch:updateManuSelect', select_product_ID);
+    } 
+    
+});
+
+ipc.on('batch:getManuSelect', function(event,data){
+    
+
+    $('#b_select_manu').val(data[0].manufacturer_ID);
+
+    instances_init();
+
+});
+
+// Other Functions
+
+function instances_init(){
+    var elems = document.querySelectorAll('select');
+    var options = {};
+    var instances = M.FormSelect.init(elems, options);
+}

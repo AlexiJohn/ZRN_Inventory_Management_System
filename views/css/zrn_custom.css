@@ -1,4 +1,19 @@
 
+header, main, footer {
+  padding-left: 220px;
+}
+
+main div.container{
+  width: 95%
+}
+
+@media only screen and (max-width : 992px) {
+  header, main, footer {
+    padding-left: 0;
+  }
+}
+
+
 .fix-logo {
     height: 32px;
     margin-top: 10px;
@@ -76,3 +91,89 @@ thead {
 table {
   width:100%;
 } */
+
+
+/* NAVBAR */
+
+.c_sidenav {
+  height: 100%; 
+  width: 222px; 
+  position: fixed; 
+  z-index: 1; 
+  top: 0; 
+  left: 0;
+  background-color: #061D54; 
+  overflow-x: hidden;
+  padding-top: 20px;
+}
+
+/* FOR THE NAV LAIDEASE DESIGN */
+.c_sidenav a {
+font-family: 'Nunito', sans-serif;
+font-style: normal;
+font-weight: bold;
+font-size: 16px;
+line-height: 64px;
+display: flex;
+align-items: center;
+color: #FFFFFF;
+position: relative;
+/* left: 28.51%;
+right: 24.01%;
+ */
+top: 16.67%;
+padding-left: 25px;
+text-decoration: none;
+}
+
+/* FOR THE SEC-C HOVER CHILLING */
+.c_sidenav a:hover {
+  background-color: #f0f4ff25;
+}
+
+/* stuff for the company logo on top */
+
+#biocorenavlogo {
+position: absolute;
+width: 166px;
+height: 53px;
+left: 26px;
+top: 34px;
+}
+
+/* for the nav icon to have space before the text */
+.navicon {
+    padding-right: 14px;
+}
+
+/* big time stamp placeholder  */
+/* big time stamp placeholder  */
+#timestamp{
+  position: absolute;
+  left: 11.65%;
+  right: 4.42%;
+  top: 87.85%;
+  bottom: 0%;
+  
+  font-family: 'Nunito', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 24px;
+  line-height: 33px;
+  
+  color: #FFFFFF;
+  }
+  
+  /* datetstamp placeholder here  */
+  #datestamp {
+  font-family: 'Nunito', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 16px;
+  line-height: 22px;
+  }
+
+body{
+  font-family: 'Nunito', sans-serif;
+  color: #061D54;
+}

@@ -10,45 +10,59 @@
 </head>
 
 <body>
-    <div class="navbar-fixed">
 
-        <nav class="zrn-background">
-            <div class="nav-wrapper">
-                <div class="brand-logo center s5">
-                    <img class="fix-logo" src="images/ZRN_logo_small_white.svg" alt="ZRN_Logo">
-                    <h4 class="valign-wrapper" style="display: inline;">Inventory</h4>
-                </div>
-
-                <div id="back_button" class="col s1">
-                    <a href="#" class="">
-                        <i class="fix-navbar material-icons white-text">
-                        arrow_back
-                        </i>
-                    </a>
-                </div>
+    <div class="c_sidenav">
+        
+        <img id="biocorenavlogo" src="./images/Biocore_Logo_BlueWhite.png">
+          <a href="#"><img class = "navicon" src="./images/Dashboard Icon.png">Dashboard</a>
+          <a href="#"><img class = "navicon" src="./images/Sales Icon.png">Sales</a>
+          <a href="#"><img class = "navicon" src="./images/Inventory Icon.png">Inventory</a>
+          <a href="#"><img class = "navicon" src="./images/History Icon.png">History</a>
+          <a href="#"><img class = "navicon" src="./images/Reports Icon.png">Reports</a>
+        
+          <div id = "timestamp"> 
+            10:50:25 AM
+            <div id = "datestamp">
+                SUN 10/12/2020
             </div>
-        </nav>
-
+        
+          </div>
+        
     </div>
 
+    <main>
+
     <div class="container">
-        <div class="row zrn-color-font">
-            <div class="col s8">
-                <h4>
-                    Inventory Details
-                </h4>
-            </div>
+    
+        <div class="row">
+            <div></div>
+            <!-- <a href="#" >
+                <i class="material-icons indigo-text">
+                arrow_back
+                </i>
+            </a> -->
             <div class="col s4">
-                <button class="right mt-25 btn waves-effect waves-light blue darken-4">
+            <h4>
+                
+                Inventory Details
+            </h4>
+            </div>
+
+            <div class="col s4 right mt-25">
+                <button class="btn waves-effect waves-light blue darken-4">
                     Delete Stock
                 </button>
-                <button id="btn_edit" data-target="edit_batch" class="btn modal-trigger right mt-25 mr-5 btn waves-effect waves-light blue darken-4">
+                <button id="btn_edit" data-target="edit_batch" class="btn modal-trigger btn waves-effect waves-light blue darken-4">
                     Edit Stock
                 </button>
             </div>
+
         </div>
-        <hr>  
+
     </div>
+        
+    
+    <hr>  
     
     <div class="container bold">
 
@@ -134,6 +148,9 @@
             </div>
         </div>
     </div>
+    
+    </main>
+
 
     <!-- MODAL STRUCTURE -->
     <div id="edit_batch" class="modal">
@@ -190,16 +207,8 @@
         </div>
     </div>
 
-    
-
-
-
-
-
-
-
-<script src="./DOM/inventoryDetails.js"></script>
 <script type="text/javascript" src="js/materialize.min.js"></script>
-<script src="./DOM/init.js"></script>
+<script src="./res/inventoryDetails.js"></script>
+<script src="./js/init.js"></script>
 </body>
 </html>

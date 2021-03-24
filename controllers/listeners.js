@@ -6,9 +6,11 @@ const window = require('electron').BrowserWindow;
 const url = require('url');
 const path = require('path');
 
+const util = require('util');
+
 var db = require('./database');
 
-// Adding/updating queries
+// BATCHES
 
 ipc.on('batch:add', function(event,data){
 
@@ -41,7 +43,6 @@ ipc.on('batch:add', function(event,data){
         console.log(prod_name);
 
         product();
-
     });
 
 
@@ -76,8 +77,14 @@ ipc.on('batch:add', function(event,data){
         db.query(batch_query, batch_data, function(err,result){
             if (err) throw err;
             console.log("BATCH: Number of records inserted: " + result.affectedRows);
+
+            getInventory();
+            getManufacturers();
+            getProduct();
         });
     }
+
+    
 });
 
 ipc.on('batch:existingManu', function(event,data){
@@ -113,15 +120,27 @@ ipc.on('batch:existingManu', function(event,data){
 
         // INSERT Query for batch
         db.query(batch_query, batch_data, function(err,result){
+
             if (err) throw err;
+
             console.log("BATCH: Number of records inserted: " + result.affectedRows);
+            
+            getInventory();
+            getManufacturers();
+            getProduct();
+
         });
     }
+
+    
 });
 
 ipc.on('batch:addNewBatch', function(event,data){
 
     batch();
+
+    var current_window = window.getFocusedWindow();
+
     function batch(){
         // SELECT Query for last inserted product and batch
         var batch_query = "INSERT INTO batch (product_ID, manufacturer_ID, batch_no, delivery_date, expiration_Date, quantity, unit_price, threshold) VALUES (?)";
@@ -132,9 +151,35 @@ ipc.on('batch:addNewBatch', function(event,data){
         db.query(batch_query, batch_data, function(err,result){
             if (err) throw err;
             console.log("BATCH: Number of records inserted: " + result.affectedRows);
+
+            getInventory();
+            getManufacturers();
+            getProduct();
         });
     }
+
+    
+
 });
+
+ipc.on('batch:updateManuSelect',function(event,data){
+
+    var current_window = window.getFocusedWindow();
+    
+    var product_query = 'SELECT manufacturer_ID FROM product WHERE product_ID = ?' 
+
+    db.query(product_query, data, function(err,result){
+        if (err) throw err;
+
+        current_window.webContents.send('batch:getManuSelect', result);
+
+        getInventory();
+        getManufacturers();
+        getProduct();
+    });
+});
+
+//BATCHES DETAILS
 
 ipc.on('inventory:viewBatch', function(event,data){
 
@@ -169,6 +214,7 @@ ipc.on('inventory:viewBatch', function(event,data){
     }
 
     function m_query(){
+        
         db.query(manufacturer_query, batch_data.manufacturer_ID, function(err, result){
             
             if (err) throw err;
@@ -177,6 +223,10 @@ ipc.on('inventory:viewBatch', function(event,data){
 
             current_window.webContents.on('did-finish-load', function(){
                 current_window.webContents.send('inventory:receiveBatch', get_data);
+
+            if (current_window.webContents.isLoading() == false){
+                current_window.webContents.send('inventory:receiveBatch', get_data);
+            }
             });
         });
     }
@@ -184,10 +234,10 @@ ipc.on('inventory:viewBatch', function(event,data){
     
 });
 
-
-ipc.once('inventory:updateBatch', function(event,data){
+ipc.on('inventory:updateBatch', function(event,data){
 
     var current_window = window.getFocusedWindow();
+    var update_data = data;
 
     var batch_query = "UPDATE batch SET batch_no = ?, delivery_date = ?, expiration_Date = ?, quantity = ?, unit_price = ?, threshold = ? WHERE lot_no = ?";
 
@@ -195,14 +245,104 @@ ipc.once('inventory:updateBatch', function(event,data){
         if (err) throw err;
 
         current_window.webContents.on('did-finish-load', function(){
-            current_window.webContents.send('inventory:detailsReload', data);
-            
+            current_window.webContents.send('inventory:detailsReload', update_data);
         });
 
-        current_window.reload();
+        if (current_window.webContents.isLoading() == false){
+            current_window.webContents.send('inventory:detailsReload', update_data);
+        }
+
+        
     });
     
 });
+//LOGIN
+
+ipc.on('login', function(event,data){
+
+    var current_window = window.getFocusedWindow();
+
+    current_window.loadURL(url.format({
+        pathname: path.join(__dirname, '../views/inventoryMasterlist.html'),
+        protocol: 'file:',
+        slashes: true
+    }));
+
+    getInventory();
+
+    getManufacturers();
+    getProduct();
+
+});
+
+// GET AND RELOAD INVENTORY MASTER LIST
+
+function getInventory(){
+
+    var product_batch_query = 'SELECT b.product_ID, p.product_name, SUM(b.quantity) AS quantity_sum FROM batch b, product p WHERE p.product_ID = b.product_ID GROUP BY b.product_ID ORDER BY p.product_name ASC'
+    var product_batch_no_query = 'SELECT b.lot_no, b.product_ID, b.batch_no, b.quantity FROM batch b, product p, manufacturer m WHERE b.product_ID = p.product_ID AND m.manufacturer_ID = b.manufacturer_ID ORDER BY p.product_ID;'
+
+    var current_window = window.getFocusedWindow();
+
+    db.query(product_batch_query, function(err,result){
+        if (err) throw err;
+        
+        current_window.webContents.once('did-finish-load', function(){
+            current_window.webContents.send('inventory:getInventory:product', result);
+        });
+
+        if (current_window.webContents.isLoading() == false){
+            current_window.webContents.send('inventory:getInventory:product', result);
+        }
+
+    });
+
+    db.query(product_batch_no_query, function(err,result){
+        if (err) throw err;
+
+        current_window.webContents.once('did-finish-load', function(){
+            current_window.webContents.send('inventory:getInventory:batch', result);
+        });
+
+        if (current_window.webContents.isLoading() == false){
+            current_window.webContents.send('inventory:getInventory:batch', result);
+        }
+    });
+
+}
+
+function getManufacturers(){
+
+    var manu_query = 'SELECT * FROM manufacturer ORDER BY manufacturer_name';
+    var current_window = window.getFocusedWindow();
+
+    db.query(manu_query, function(err,result){
+        if (err) throw err;
+        mq_result = result;
+
+        current_window.webContents.on('did-finish-load', function () {
+            current_window.webContents.send('batch:getManuList', mq_result);
+        });
+    });
+
+}
+
+function getProduct(){
+
+    var prod_query = 'SELECT * FROM product ORDER BY product_name';
+    var current_window = window.getFocusedWindow();
+
+    db.query(prod_query, function(err,result){
+        if (err) throw err;
+        pq_result = result;
+
+        current_window.webContents.on('did-finish-load', function(){
+            current_window.webContents.send('batch:getProductList', pq_result);
+        });
+    });
+}
+
+// GLOBAL
 
 ipc.on('go-back', function(event,data){
 

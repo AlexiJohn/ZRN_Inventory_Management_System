@@ -8,4 +8,3 @@ $("#btn_login").on('click', function(event){
     ipc.send('login','data');    
 
 });
-

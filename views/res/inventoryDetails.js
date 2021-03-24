@@ -1,8 +1,6 @@
 const electron = require('electron');
 const ipc = electron.ipcRenderer;
-const thiswindow = require('electron').BrowserWindow;
 const moment = require('moment');
-
 
 const $ = require( "jquery" );
 const materialize = require('materialize-css');
@@ -33,8 +31,8 @@ $('#addBatch').on('click', function(){
     console.log(batch_no)
     var delivery_date = $('#delivery_Date').val();
     var expiration_date = $('#expiration_Date').val();
-    var unit_price = $('#quantity').val();
-    var quantity = $('#unit_price').val();
+    var unit_price = $('#unit_price').val();
+    var quantity = $('#quantity').val();
     var threshold = $('#threshold').val();
 
     var lot_no = batch_data.lot_no;
@@ -100,11 +98,23 @@ ipc.on('inventory:detailsReload', function(event,data){
     quantity.text(data[4]);
     threshold.text(data[5]);
 
+    var array_data = {
+        batch_no: data[0],
+        delivery_date: data[1],
+        expiration_Date: data[2],
+        unit_price: data[3],
+        quantity: data[4],
+        threshold: data[5]
+    }
+
+    get_data = [array_data, get_data[1],get_data[2]];
+
 });
 
 function autoFillModal(fields){
     
-    
+    console.log(fields, 'fields');
+
     fields_batch_data = fields[0];
     fields_prod_name = fields[1][0].product_name;
     fields_manu_name = fields[2][0].manufacturer_name;

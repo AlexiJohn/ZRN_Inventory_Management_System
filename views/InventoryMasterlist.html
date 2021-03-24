@@ -10,38 +10,237 @@
 
 </head>
 <body>
-    
-    <div class="navbar-fixed">
-        <nav class="zrn-background">
-            <div class="nav-wrapper">
-                <div href="#!" class="brand-logo center">
-                    <img class="fix-logo" src="images/ZRN_logo_small_white.svg" alt="ZRN_Logo">
-                    <h4 class="valign-wrapper" style="display: inline;">Inventory</h4>
-                </div>
+
+    <div class="c_sidenav">
+        
+        <img id="biocorenavlogo" src="./images/Biocore_Logo_BlueWhite.png">
+          <a href="#"><img class = "navicon" src="./images/Dashboard Icon.png">Dashboard</a>
+          <a href="#"><img class = "navicon" src="./images/Sales Icon.png">Sales</a>
+          <a href="#"><img class = "navicon" src="./images/Inventory Icon.png">Inventory</a>
+          <a href="#"><img class = "navicon" src="./images/History Icon.png">History</a>
+          <a href="#"><img class = "navicon" src="./images/Reports Icon.png">Reports</a>
+        
+          <div id = "timestamp"> 
+            10:50:25 AM
+            <div id = "datestamp">
+                SUN 10/12/2020
             </div>
-        </nav>
+        
+          </div>
+        
     </div>
 
-    <div class="container">
-        <table class="highlight centered mt">
-            <thead class="zrn-background zrn-white-font round-thead">
-                <tr>
-                    <th>Product</th>
-                    <th>Current Inventory</th>
-                    <th>Starting Inventory</th>
-                    <th>Offtake</th>
-                    <th>Ending Inventory</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody id="tbody_inventory" >
-            </tbody>
-        </table>
+    <main>
+
+        <div class="container">
+
+        <div class="row">
+            <h4 class="col s2">Inventory </h4>
+
+            <div class="inline col s2 mt">
+                
+                <select name = "dateFilter" id = "dateFilter">
+                    <option value = "daily">Daily</option>
+                    <option value = "weekly">Weekly</option>
+                    <option value = "monthly">Monthly</option>
+                </select>
+
+            </div>
+            
+
+        </div>
+
+        <div class="row">
+
+            <div class="col s2">
+                <select name = "searchFilter" id = "searchFilter">
+                    <option value = "name">Name</option>
+                    <option value = "date">Date</option>
+                    <option value = "dateofdelivery">Date of Delivery</option>
+                    <option value = "manufacturer">Manufacturer</option>
+                    <option value = "expirationdate">Expiration Date</option>
+                </select>
+            </div>
+            <input class="col s2" type = "text" id = "filter" name = "filter">
+
+            <button class="waves-effect waves-light btn col s2 indigo darken-4">Search</button>	
+
+            <button data-target="formPicker" class="modal-trigger waves-effect waves-light btn col s2 right indigo darken-4">Add Stock</button>
+
+        </div>
+
+        <div class="row">
+            <div class="col s12">
+                <table class="highlight centered mt">
+                    <thead class="zrn-background zrn-white-font round-thead">
+                        <tr>
+                            <th>Product</th>
+                            <th>Current Inventory</th>
+                            <th>Starting Inventory</th>
+                            <th>Offtake</th>
+                            <th>Ending Inventory</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody_inventory" >
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        </div>
+    </main>
+
+    <!-- MODALS -->
+
+    <!-- MODAL FOR PICKING FORM -->
+    <div id="formPicker" class="modal">
+
+        <div class="modal-content">
+            <h5 class="center">Add New Stock</h5>
+            <p class="center">Which action do you want to proceed with?</p>
+            <div class="row">
+            <button data-target="add_Product" class="modal-trigger modal-close waves-effect waves-light btn col s4 offset-s4 indigo darken-4">Add New Product</button>
+            </div>
+
+            <div class="row">
+                <button data-target="add_Batch" class="modal-trigger modal-close waves-effect waves-light btn col s4 offset-s4 indigo darken-4">Add New Batch</button>
+            </div>
+        </div>
+
+    </div>
+    <!-- MODAL FOR FOR NEW PRODUCT -->
+    <div id="add_Product" class="modal">
+        <div class="modal-content">
+          <h5 class="bold">Add New Product</h5>
+          <form id = 'formproduct'>
+            <div>
+            
+            <div class="input-field">
+            <label for="product_name">Product Name</label>
+            <input id="product_name" name="product_name" type="text"/>
+            </div>
+
+            <div class="input-field">
+                <label for="batch_no" >Batch Number</label>
+                <input id="batch_no" name="batch_no" type="text"/>
+            </div>
+
+            <div class="input-field">
+                <label for="manufacturer_name">Manufacturer Name</label>
+                <input id="manufacturer_name" name="manufacturer_name" type="text" placeholder="Manufacturer Name"/>
+            </div>
+            
+            <div id="selection_manu" class="input-field" style="display:none">
+                <select id="select_manu" class="active">
+                    <option value="" disabled selected>Choose Manufacturer</option>
+                </select>
+            </div>
+
+            <p>
+            <label for="new_manu">
+                <input id="new_manu" name="new_manu" type="checkbox" checked="checked" class="filled-in"/>
+                <span>New Manufacturer?</span>
+            </label>
+            </p>
+            <br>
+
+            <div class="input-field">
+            
+                <label for="deliver_Date">Delivery Date</label>
+                <input class="active" id="delivery_Date" name="expiration_Date" type="date" placeholder="mm/dd/yyyy"/>
+            </div>
+            
+            <div class="input-field">
+            
+                <label for="expiration_Date">Expiration Date</label>
+                <input class="active" id="expiration_Date" name="expiration_Date" type="date" placeholder="mm/dd/yyyy"/>
+            </div>
+            
+            <div class="input-field">
+            
+                <label for="quantity">Quantity</label>
+                <input id="quantity" name="quantity" type="number"/>
+            </div>
+            
+            <div class="input-field">
+            
+                <label for="unit_price">Price</label>
+                <input id="unit_price" name="unit_price" type="number" step="any"/>
+            </div>
+            
+            <div class="input-field">
+            <label for="threshold">Threshold</label>
+            <input id="threshold" name="threshold" type="number"/>
+            </div>
+
+            <button id="addProduct" type="submit" class="modal-close waves-effect waves-light btn">Add Product</button>
+            </div>
+        </form>
+        </div>
     </div>
 
+    <!-- MODAL FOR NEW BATCH -->
+    <div id="add_Batch" class="modal">
+        <div class="modal-content">
+            <h5 class="bold">Add New Batch</h5>
+            <form id="formbatch">
+            <div>
+                
+                <div id="div_select_product_name" name="product_name" class="input-field">
+                    <select id="b_select_product">
+                        <option value="" disabled selected>Choose Product</option>
+                    </select>
+                </div>
+
+                <div class="input-field">
+                    <label for="b_batch_no" >Batch Number</label>
+                    <input id="b_batch_no" name="b_batch_no" type="text"/>
+                </div>
+                
+                <div id="b_selection_manu" class="input-field">
+                    <select id="b_select_manu">
+                        <option value="" disabled selected>Choose Manufacturer</option>
+                    </select>
+                </div>
+
+                <div class="input-field">
+                    <label for="b_deliver_Date">Delivery Date</label>
+                    <input class="active" id="b_delivery_Date" name="b_expiration_Date" type="date" placeholder="mm/dd/yyyy"/>
+                </div>
+                
+                <div class="input-field">
+                
+                    <label for="b_expiration_Date">Expiration Date</label>
+                    <input class="active" id="b_expiration_Date" name="b_expiration_Date" type="date" placeholder="mm/dd/yyyy"/>
+                </div>
+                
+                <div class="input-field">
+                
+                    <label for="b_quantity">Quantity</label>
+                    <input id="b_quantity" name="b_quantity" type="number"/>
+                </div>
+                
+                <div class="input-field">
+                
+                    <label for="b_unit_price">Price</label>
+                    <input id="b_unit_price" name="b_unit_price" type="number" step="any"/>
+                </div>
+                
+                <div class="input-field">
+                <label for="b_threshold">Threshold</label>
+                <input id="b_threshold" name="b_threshold" type="number"/>
+                </div>
+
+                <button id="addBatch" type="submit" class="modal-close waves-effect waves-light btn">Add Product</button>
+        </div>
+        </form>
+    </div>
+    
     <script type="text/javascript" src="js/materialize.min.js"></script>
-    <script src="./DOM/InventoryMasterList.js"></script>
-    <script src="./DOM/init.js"></script>
+    <script src="./js/init.js"></script>
+    <script src="./res/inventoryMasterlist.js"></script>
+    <script src="./res/navbar.js"></script>
 </body>
 </html>
