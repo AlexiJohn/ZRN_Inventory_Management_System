@@ -256,6 +256,7 @@ ipc.on('inventory:updateBatch', function(event,data){
     });
     
 });
+
 //LOGIN
 
 ipc.on('login', function(event,data){
@@ -320,7 +321,7 @@ function getManufacturers(){
         if (err) throw err;
         mq_result = result;
 
-        current_window.webContents.on('did-finish-load', function () {
+        current_window.webContents.once('did-finish-load', function () {
             current_window.webContents.send('batch:getManuList', mq_result);
         });
     });
@@ -336,7 +337,7 @@ function getProduct(){
         if (err) throw err;
         pq_result = result;
 
-        current_window.webContents.on('did-finish-load', function(){
+        current_window.webContents.once('did-finish-load', function(){
             current_window.webContents.send('batch:getProductList', pq_result);
         });
     });
@@ -350,4 +351,20 @@ ipc.on('go-back', function(event,data){
 
     current_window.webContents.goBack();
 
+});
+
+ipc.on('nav:inventory', function(event,data){
+
+    var current_window = window.getFocusedWindow();
+
+    current_window.loadURL(url.format({
+        pathname: path.join(__dirname, '../views/inventoryMasterlist.html'),
+        protocol: 'file:',
+        slashes: true
+    }));
+
+    getInventory();
+    getManufacturers();
+    getProduct();
+    
 });
