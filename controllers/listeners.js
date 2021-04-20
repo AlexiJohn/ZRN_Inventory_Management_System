@@ -346,6 +346,7 @@ function getProduct(){
 // GLOBAL
 
 ipc.on('go-back', function(event,data){
+    
 
     var current_window = window.getFocusedWindow();
 
@@ -366,5 +367,5 @@ ipc.on('nav:inventory', function(event,data){
     getInventory();
     getManufacturers();
     getProduct();
-    
+
 });

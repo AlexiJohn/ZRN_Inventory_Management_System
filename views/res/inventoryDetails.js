@@ -86,28 +86,28 @@ ipc.on('inventory:detailsReload', function(event,data){
     var quantity = $('#id_quantity');
     var threshold = $('#id_threshold');
 
-    var deliv = moment(data[1], "ddd MMM DD YYYY HH:mm:ss");
-    var exp = moment(data[2], "ddd MMM DD YYYY HH:mm:ss");
+    var deliv = moment(data[1], "YYYY-MM-DD");
+    var exp = moment(data[2], "YYYY-MM-DD");
     var format_deliv = deliv.format('MMM DD, YYYY');
     var format_exp = exp.format('MMM DD, YYYY');
 
     batch_no.text(data[0]);
     delivery_date.text(format_deliv);
     expiration_date.text(format_exp);
-    unit_price.text(data[3]);
-    quantity.text(data[4]);
+    quantity.text(data[3]);
+    unit_price.text(data[4]);
     threshold.text(data[5]);
 
     var array_data = {
         batch_no: data[0],
         delivery_date: data[1],
         expiration_Date: data[2],
-        unit_price: data[3],
-        quantity: data[4],
+        quantity: data[3],
+        unit_price: data[4],
         threshold: data[5]
     }
 
-    get_data = [array_data, get_data[1],get_data[2]];
+    get_data = [array_data, get_data[1], get_data[2]];
 
 });
 
