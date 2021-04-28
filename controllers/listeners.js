@@ -9,14 +9,17 @@ const path = require('path');
 
 const util = require('util');
 
+const moment = require('moment');
+
 var db = require('./database');
 var async_db = require('./async_database');
 
-// DATETIME
+// functions
+
 async function getDateTime(){
     
     Date.prototype.today = function () { 
-        return this.getFullYear() + "/" + ((this.getDate() < 10)?"0":"") + this.getDate() + "/" + (((this.getMonth()+1) < 10)?"0":"") + (this.getMonth()+1);
+        return this.getFullYear() + "-" + ((this.getDate() < 10)?"0":"") + this.getDate() + "-" + (((this.getMonth()+1) < 10)?"0":"") + (this.getMonth()+1);
     }
     
     // For the time now
@@ -129,7 +132,7 @@ async function masterUpdate_product_ordered(values, pk){
 }
 
 async function masterQuery_notification(){
-    var query = `SELECT * FROM notifications`;
+    var query = `SELECT * FROM notifications ORDER BY notification_ID DESC`;
 
     var query_result = await async_db.query(query);
 
@@ -187,11 +190,47 @@ async function update_BATCH_bySALE(quantity, pk){
     return query_result;
 }
 
+async function update_BATCH_bySTATUS(status, pk){
+    var query = `UPDATE batch SET status='${status}' WHERE lot_no = ${pk}`;
+
+    var query_result = await async_db.update(query);
+
+    return query_result;
+}
 // NOTIFICATIONS
 
-ipc.on('notify:getNotifs', async function(event,data){
+async function checkExpiry(batches){
+    for (i in batches){
+        if (batches[i].status != "expired"){
+            var batch_date = batches[i].expiration_Date;
 
-});
+            var moment_current = moment();
+
+            var moment_batch = moment(batch_date, "ddd MMM DD YYYY HH:mm:ss");
+
+            var months = moment_batch.diff(moment_current,'months');
+
+
+            if ( months <= 0 ){
+                var check_lot_no = batches[i].lot_no;
+                var check_descript = "Expired Stock";
+                var check_notif_type = "expiring";
+                var update_batch_status = "expired";
+                var update_batch = await update_BATCH_bySTATUS(update_batch_status, check_lot_no);
+                var insert_notif = await masterInsert_notification(check_lot_no, check_descript, check_notif_type);
+            } else if( months < 6 ){
+                var check_lot_no = batches[i].lot_no;
+                var check_descript = "Stock will Expire";
+                var check_notif_type = "expiring";
+                var update_batch_status = "expiring";
+                var update_batch = await update_BATCH_bySTATUS(update_batch_status, check_lot_no);
+                var insert_notif = await masterInsert_notification(check_lot_no, check_descript, check_notif_type);
+            }
+        }    
+    }
+
+    return true;
+}
 
 // BATCHES
 
@@ -483,15 +522,33 @@ async function checkForThreshold(quantity, details){
 }
 //LOGIN
 
-ipc.on('login', function(event,data){
+ipc.on('login', async function(event,data){
+
+    
 
     var current_window = window.getFocusedWindow();
+
+    var notifs = await masterQuery_notification();
+    var batches = await masterQuery_Batch();
+    var products = await masterQuery_Product();
+
+    var checked = await checkExpiry(batches);
+
+    var results = [notifs, batches, products];
 
     current_window.loadURL(url.format({
         pathname: path.join(__dirname, '../views/dashboard.html'),
         protocol: 'file:',
         slashes: true
     }));
+
+    current_window.webContents.once('did-finish-load', function(){
+        current_window.webContents.send('notify:getNotifs', results);
+    });
+
+    if (current_window.webContents.isLoading() == false){
+        current_window.webContents.send('notify:getNotifs', results);
+    }
 
 });
 
@@ -702,7 +759,6 @@ async function loadSalesMasterlist(){
 
 ipc.on('go-back', function(event,data){
     
-
     var current_window = window.getFocusedWindow();
 
     current_window.webContents.goBack();
@@ -739,13 +795,27 @@ ipc.on('nav:sales', function(event,data){
 
 });
 
-ipc.on('nav:dashboard', function(event,data){
+ipc.on('nav:dashboard', async function(event,data){
 
     var current_window = window.getFocusedWindow(); 
+
+    var notifs = await masterQuery_notification();
+    var batches = await masterQuery_Batch();
+    var products = await masterQuery_Product();
+
+    var results = [notifs, batches, products];
 
     current_window.loadURL(url.format({
         pathname: path.join(__dirname, '../views/dashboard.html'),
         protocol: 'file:',
         slashes: true
     }));
+
+    current_window.webContents.once('did-finish-load', function(){
+        current_window.webContents.send('notify:getNotifs', results);
+    });
+
+    if (current_window.webContents.isLoading() == false){
+        current_window.webContents.send('notify:getNotifs', results);
+    }
 });

@@ -13,6 +13,13 @@ main div.container{
   }
 }
 
+.dashboard-scroll{
+
+  overflow-x: hidden;
+  overflow-y: auto;
+  height: 200px;
+}
+
 .notification .badge {
   position: absolute;
   top: 0px;
