@@ -227,7 +227,7 @@ $('#addNewSale').on('click', function(){
     var last_name = document.getElementById('last_name').value;
     var suffix = document.getElementById('suffix').value;
     var client_address = document.getElementById('client_address').value;
-    var completion_date = document.getElementById('completion_date').value;
+    // var completion_date = document.getElementById('completion_date').value;
     var payment_option = document.getElementById('select_payment').value;
     var payment_duedate = document.getElementById('payment_duedate').value;
     var delivery_date = document.getElementById('delivery_Date').value;
@@ -247,7 +247,7 @@ $('#addNewSale').on('click', function(){
         last_name,
         suffix,
         client_address,
-        completion_date,
+        // completion_date,
         payment_option,
         payment_duedate,
         delivery_date,
@@ -262,9 +262,9 @@ $('#addNewSale').on('click', function(){
         var product_row = products_table.children[i].children;
 
         if (product_row[6].innerHTML == "%"){
-            var row_dicsount = parseInt(product_row[6].innerHTML.replace("%","")) * 0.01;
-        } else {
             var row_dicsount = 0;
+        } else {
+            var row_dicsount = parseInt(product_row[6].innerHTML.replace("%","")) * 0.01;
         }
         
         var insert_row = [
@@ -280,6 +280,7 @@ $('#addNewSale').on('click', function(){
     }
 
     ipc.send('sales:createNewSale', [CDR_insert,product_ordered_insert] );
+    console.log([CDR_insert,product_ordered_insert]);
 
     sales_form.reset();
     products_table.innerHTML = "";

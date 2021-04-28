@@ -13,6 +13,18 @@ main div.container{
   }
 }
 
+.notification .badge {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  padding: 0px 0px;
+  border-radius: 0%;
+  height: 5px;
+  width: 5px;
+  background: red;
+  color: white;
+}
+
 .bottom-sale{
   padding-top: 30px;
   padding-bottom: 30px;

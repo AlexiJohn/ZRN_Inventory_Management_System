@@ -6,7 +6,7 @@ var reportsNav = document.getElementById("reportsNav");
 
 
 dashboardNav.addEventListener('click', function(){
-
+    ipc.send('nav:dashboard','data');
 });
 
 inventoryNav.addEventListener('click', function(){
@@ -22,6 +22,7 @@ salesNav.addEventListener('click', function(){
 historyNav.addEventListener('click', function(){
 
 });
+
 reportsNav.addEventListener('click', function(){
 
 });

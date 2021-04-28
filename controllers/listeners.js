@@ -12,6 +12,24 @@ const util = require('util');
 var db = require('./database');
 var async_db = require('./async_database');
 
+// DATETIME
+async function getDateTime(){
+    
+    Date.prototype.today = function () { 
+        return this.getFullYear() + "/" + ((this.getDate() < 10)?"0":"") + this.getDate() + "/" + (((this.getMonth()+1) < 10)?"0":"") + (this.getMonth()+1);
+    }
+    
+    // For the time now
+    Date.prototype.timeNow = function () {
+         return ((this.getHours() < 10)?"0":"") + this.getHours() +":"+ ((this.getMinutes() < 10)?"0":"") + this.getMinutes() +":"+ ((this.getSeconds() < 10)?"0":"") + this.getSeconds();
+    }
+
+    // var datetime = new Date().today() + " " + new Date().timeNow();
+    var datetime = new Date().today();
+    
+    return datetime;
+}
+
 
 // MASTER QUERIES // THESE ARE NEW ONES, MUCH BETTER SINCE THEY'RE ASYNC FUNCTIONS
 
@@ -45,7 +63,11 @@ async function masterQuery_CDR(){
 
 async function masterInsert_CDR(values){
     
-    var masterInsert_CDR = `INSERT INTO client_delivery_receipt(CDR_no, sales_invoice_no, total, first_name, middle_initial, last_name, suffix, client_address, completion_date, payment_option, payment_duedate, delivery_date, ordered_date, delivery_fee, booked_by) VALUES (?)`;
+    // WITH COMPLETION DATE
+    // var masterInsert_CDR = `INSERT INTO client_delivery_receipt(CDR_no, sales_invoice_no, total, first_name, middle_initial, last_name, suffix, client_address, completion_date, payment_option, payment_duedate, delivery_date, ordered_date, delivery_fee, booked_by) VALUES (?)`;
+
+    var masterInsert_CDR = `INSERT INTO client_delivery_receipt(CDR_no, sales_invoice_no, total, first_name, middle_initial, last_name, suffix, client_address,  payment_option, payment_duedate, delivery_date, ordered_date, delivery_fee, booked_by) VALUES (?)`;
+
     var masterInsert_CDR_values = [values];
 
     var masterInsert_CDR_result = await async_db.insert(masterInsert_CDR, masterInsert_CDR_values);
@@ -56,11 +78,20 @@ async function masterInsert_CDR(values){
 async function masterUpdate_CDR(values, pk){
     
     console.log(values);
-
-    var query = `UPDATE client_delivery_receipt SET CDR_no=${values[0]}, sales_invoice_no=${values[1]}, total=${values[2]}, first_name='${values[3]}', middle_initial='${values[4]}', last_name='${values[5]}', suffix='${values[6]}', client_address='${values[7]}', completion_date='${values[8]}', payment_option='${values[9]}', payment_duedate='${values[10]}', delivery_date='${values[11]}', ordered_date='${values[12]}', delivery_fee=${values[13]}, booked_by='${values[14]}' WHERE CDR_no = ${pk}`;
-    console.log(query);
+    if (values[8] == ''){
+        var query = `UPDATE client_delivery_receipt SET CDR_no=${values[0]}, sales_invoice_no=${values[1]}, total=${values[2]}, first_name='${values[3]}', middle_initial='${values[4]}', last_name='${values[5]}', suffix='${values[6]}', client_address='${values[7]}', payment_option='${values[9]}', payment_duedate='${values[10]}', delivery_date='${values[11]}', ordered_date='${values[12]}', delivery_fee=${values[13]}, booked_by='${values[14]}' WHERE CDR_no = ${pk}`;
+        
+        console.log(query);
+    }
+    else {
+        var query = `UPDATE client_delivery_receipt SET CDR_no=${values[0]}, sales_invoice_no=${values[1]}, total=${values[2]}, first_name='${values[3]}', middle_initial='${values[4]}', last_name='${values[5]}', suffix='${values[6]}', client_address='${values[7]}', completion_date='${values[8]}', payment_option='${values[9]}', payment_duedate='${values[10]}', delivery_date='${values[11]}', ordered_date='${values[12]}', delivery_fee=${values[13]}, booked_by='${values[14]}' WHERE CDR_no = ${pk}`;
+        
+        console.log(query);
+    }
 
     var masterUpdate_CDR = await async_db.update(query);
+
+    return masterUpdate_CDR;
 }
 
 async function masterQuery_product_ordered(values){
@@ -96,9 +127,28 @@ async function masterUpdate_product_ordered(values, pk){
     return masterUPDATE_product_ordered_result;
 
 }
-//SPECIFIC QUERIES FOR CERTAIN PAGES
 
-// FOR SALES EDIT
+async function masterQuery_notification(){
+    var query = `SELECT * FROM notifications`;
+
+    var query_result = await async_db.query(query);
+
+    return query_result;
+}
+
+async function masterInsert_notification(lot_no, descript, notification_type){
+
+    var n_lot_no = lot_no;
+    var n_read_status = 0;
+    var timestamp = await getDateTime();
+    var insert = `INSERT INTO notifications(lot_no, descript, timestmp, read_status, notification_type) VALUES (?)`;
+
+    var values = [n_lot_no, descript, timestamp, n_read_status, notification_type]
+    var insert_result = await async_db.insert(insert,[values]);
+
+    return insert_result;
+}
+//SPECIFIC QUERIES FOR CERTAIN PAGES
 
 async function get_CDR(values){
 
@@ -110,6 +160,38 @@ async function get_CDR(values){
     
 }
 
+async function get_BATCH(product_id, number){
+
+    var query = `SELECT * FROM batch WHERE (product_id = ${product_id}) AND (batch_no = '${number}')`;
+
+    var query_result = await async_db.query(query);
+
+    return query_result;
+
+}
+
+async function get_PRODUCT(values){
+
+    var query = `SELECT * FROM product WHERE product_name = ?`
+
+    var query_result = await async_db.query(query,values);
+
+    return query_result;
+}
+
+async function update_BATCH_bySALE(quantity, pk){
+    var query = `UPDATE batch SET quantity = ${quantity} WHERE lot_no = ${pk}`;
+
+    var query_result = await async_db.update(query);
+
+    return query_result;
+}
+
+// NOTIFICATIONS
+
+ipc.on('notify:getNotifs', async function(event,data){
+
+});
 
 // BATCHES
 
@@ -358,6 +440,47 @@ ipc.on('inventory:updateBatch', function(event,data){
     
 });
 
+//BATCH FUNCTIONS
+
+async function updateBatchFromSale(values){
+    //ACCEPTS LIST OF LIST OF BATCH DETAILS FROM SALE
+    for (i in values){
+        var data = values[i];
+
+        var product_name = values[i][1];
+        var batch_no = values[i][2];
+        var row_quantity = values[i][4];
+
+        var query_product_name = await get_PRODUCT(product_name);
+
+        var query_batch_details = await get_BATCH(query_product_name[0].product_ID, batch_no);
+
+        var new_quantity = query_batch_details[0].quantity - row_quantity;
+
+        var update_batch_quantity = await update_BATCH_bySALE(new_quantity, query_batch_details[0].lot_no);
+        console.log(update_batch_quantity);
+
+        var checked = await checkForThreshold(new_quantity, query_batch_details[0]);
+    }
+    return true;
+}
+
+async function checkForThreshold(quantity, details){
+    if (quantity == 0){
+        var n_description = "Out of Stock";
+        var n_type = "stock";
+        var notification = await masterInsert_notification(details.lot_no, n_description, n_type);
+    }
+    else if (quantity <= details.threshold){
+        var n_description = "Low Stock";
+        var n_type = "stock";
+        var notification = await masterInsert_notification(details.lot_no, n_description, n_type);
+    } else {
+        return true;
+    }
+
+    return true;
+}
 //LOGIN
 
 ipc.on('login', function(event,data){
@@ -365,15 +488,10 @@ ipc.on('login', function(event,data){
     var current_window = window.getFocusedWindow();
 
     current_window.loadURL(url.format({
-        pathname: path.join(__dirname, '../views/inventoryMasterlist.html'),
+        pathname: path.join(__dirname, '../views/dashboard.html'),
         protocol: 'file:',
         slashes: true
     }));
-
-    getInventory();
-
-    getManufacturers();
-    getProduct();
 
 });
 
@@ -482,6 +600,7 @@ ipc.on('sales:createNewSale', async function(event,data){
 
     var sale_result = await masterInsert_CDR(data[0]);
     var product_ordered_result = await masterInsert_product_ordered(data[1]);
+    var update_batches = updateBatchFromSale(data[1]);
 
     loadSalesMasterlist();
 
@@ -547,6 +666,7 @@ ipc.on('sales:UpdateSale', async function(event,data){
     var current_CDR = data[2];
     var update_CDR = masterUpdate_CDR(data[0], current_CDR);
     var update_PO = masterUpdate_product_ordered(data[1], current_CDR);
+
     
     loadSalesMasterlist();
 
@@ -617,4 +737,15 @@ ipc.on('nav:sales', function(event,data){
         slashes: true
     }));
 
+});
+
+ipc.on('nav:dashboard', function(event,data){
+
+    var current_window = window.getFocusedWindow(); 
+
+    current_window.loadURL(url.format({
+        pathname: path.join(__dirname, '../views/dashboard.html'),
+        protocol: 'file:',
+        slashes: true
+    }));
 });

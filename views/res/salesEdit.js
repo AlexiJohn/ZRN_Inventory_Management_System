@@ -23,6 +23,7 @@ ipc.on('sales:loadEditPage:redirect', function(event,data){
     prefillFields();
     prepopulateTable();
     calcTotal();
+    instances_init();
 });
 
 
@@ -399,9 +400,9 @@ $('#addNewSale').on('click', function(){
         var product_row = products_table.children[i].children;
 
         if (product_row[6].innerHTML == "%"){
-            var row_dicsount = parseInt(product_row[6].innerHTML.replace("%","")) * 0.01;
-        } else {
             var row_dicsount = 0;
+        } else {
+            var row_dicsount = parseInt(product_row[6].innerHTML.replace("%","")) * 0.01;
         }
         
         var insert_row = [
