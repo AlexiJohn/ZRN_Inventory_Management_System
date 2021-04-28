@@ -1,6 +1,7 @@
 const ipc = require('electron').ipcMain;
 var { webContents } = require('electron');
 var remote = require('electron').remote;
+
 const window = require('electron').BrowserWindow;
 
 const url = require('url');
@@ -9,6 +10,106 @@ const path = require('path');
 const util = require('util');
 
 var db = require('./database');
+var async_db = require('./async_database');
+
+
+// MASTER QUERIES // THESE ARE NEW ONES, MUCH BETTER SINCE THEY'RE ASYNC FUNCTIONS
+
+async function masterQuery_Product(){
+    
+    var master_product = 'SELECT * FROM product ORDER BY product_name';
+
+    var master_product_result = await async_db.query(master_product);
+
+    return master_product_result;
+}
+
+async function masterQuery_Batch(){
+
+    var master_batch = 'SELECT * FROM batch';
+
+    var master_batch_result = await async_db.query(master_batch);
+
+    return master_batch_result;
+
+}
+
+async function masterQuery_CDR(){
+
+    var master_CDR = 'SELECT * FROM client_delivery_receipt ORDER BY CDR_no DESC';
+
+    var master_CDR_result = await async_db.query(master_CDR);
+
+    return master_CDR_result;
+}
+
+async function masterInsert_CDR(values){
+    
+    var masterInsert_CDR = `INSERT INTO client_delivery_receipt(CDR_no, sales_invoice_no, total, first_name, middle_initial, last_name, suffix, client_address, completion_date, payment_option, payment_duedate, delivery_date, ordered_date, delivery_fee, booked_by) VALUES (?)`;
+    var masterInsert_CDR_values = [values];
+
+    var masterInsert_CDR_result = await async_db.insert(masterInsert_CDR, masterInsert_CDR_values);
+
+    return masterInsert_CDR_result;
+}
+
+async function masterUpdate_CDR(values, pk){
+    
+    console.log(values);
+
+    var query = `UPDATE client_delivery_receipt SET CDR_no=${values[0]}, sales_invoice_no=${values[1]}, total=${values[2]}, first_name='${values[3]}', middle_initial='${values[4]}', last_name='${values[5]}', suffix='${values[6]}', client_address='${values[7]}', completion_date='${values[8]}', payment_option='${values[9]}', payment_duedate='${values[10]}', delivery_date='${values[11]}', ordered_date='${values[12]}', delivery_fee=${values[13]}, booked_by='${values[14]}' WHERE CDR_no = ${pk}`;
+    console.log(query);
+
+    var masterUpdate_CDR = await async_db.update(query);
+}
+
+async function masterQuery_product_ordered(values){
+
+    var query = 'SELECT * FROM product_ordered WHERE CDR_no = ? ORDER BY item_no ASC'
+
+    var masterQuery_product_ordered_result = await async_db.insert(query, values);
+
+    return masterQuery_product_ordered_result;
+}
+
+async function masterInsert_product_ordered(values){
+
+    var masterInsert_product_ordered = `INSERT INTO product_ordered(CDR_no, product_name, batch_no, item_no, quantity, subtotal, discount) VALUES (?)`;
+    for (i = 0; i < values.length; i++){
+        var masterInsert_product_ordered_result = await async_db.insert(masterInsert_product_ordered, [values[i]]);
+    }
+    return masterInsert_product_ordered_result;
+}
+
+async function masterUpdate_product_ordered(values, pk){
+
+    var delete_query = `DELETE FROM product_ordered WHERE CDR_no = ${pk}`;
+
+    var delete_result = await async_db.delete(delete_query);
+
+    var masterUPDATE_product_ordered = `INSERT INTO product_ordered(CDR_no, product_name, batch_no, item_no, quantity, subtotal, discount) VALUES (?)`;
+
+    for (i = 0; i < values.length; i++){
+        var masterUPDATE_product_ordered_result = await async_db.insert(masterUPDATE_product_ordered, [values[i]]);
+    }
+
+    return masterUPDATE_product_ordered_result;
+
+}
+//SPECIFIC QUERIES FOR CERTAIN PAGES
+
+// FOR SALES EDIT
+
+async function get_CDR(values){
+
+    var get_CDR = 'SELECT * FROM client_delivery_receipt WHERE CDR_no = ?';
+
+    var get_CDR_result = await async_db.query(get_CDR,values);
+
+    return get_CDR_result;
+    
+}
+
 
 // BATCHES
 
@@ -343,6 +444,140 @@ function getProduct(){
     });
 }
 
+
+// SALES
+
+ipc.on('sales:loadAddNewSale', function(event,data){
+
+    var current_window = window.getFocusedWindow();
+    
+    current_window.loadURL(url.format({
+        pathname: path.join(__dirname, '../views/salesAddNew.html'),
+        protocol: 'file:',
+        slashes: true
+    }));
+
+});
+
+ipc.on('sales:loadAddNewSale:sendData', async function(event,data){
+
+    var current_window = window.getFocusedWindow();
+
+    var product_result = await masterQuery_Product();
+    var batch_result = await masterQuery_Batch();
+
+    var result = [product_result,batch_result];
+
+    current_window.webContents.once('did-finish-load', function(){
+        current_window.webContents.send('sales:loadAddNewSale:redirect', result);
+    });
+
+    if (current_window.webContents.isLoading() == false){
+        current_window.webContents.send('sales:loadAddNewSale:redirect', result);
+    }
+
+});
+
+ipc.on('sales:createNewSale', async function(event,data){
+
+    var sale_result = await masterInsert_CDR(data[0]);
+    var product_ordered_result = await masterInsert_product_ordered(data[1]);
+
+    loadSalesMasterlist();
+
+});
+
+ipc.on('sales:loadEditPage', async function(event,data){
+
+    var current_window = window.getFocusedWindow();
+
+    var PRODUCT_result = await masterQuery_Product();
+    var BATCH_result = await masterQuery_Batch();
+    
+    var CDR_result = await get_CDR(data);
+    var PO_result = await masterQuery_product_ordered(data);
+    var result = [ PRODUCT_result, BATCH_result, CDR_result, PO_result ];
+
+
+    current_window.loadURL(url.format({
+        pathname: path.join(__dirname, '../views/salesEdit.html'),
+        protocol: 'file:',
+        slashes: true
+    }));
+
+    current_window.webContents.once('did-finish-load', function(){
+        current_window.webContents.send('sales:loadEditPage:redirect', result);
+    });
+
+    if (current_window.webContents.isLoading() == false){
+        current_window.webContents.send('sales:loadEditPage:redirect', result);
+    }
+});
+
+ipc.on('sales:loadViewPage', async function(event,data){
+
+    
+    var current_window = window.getFocusedWindow();
+
+    var PRODUCT_result = await masterQuery_Product();
+    var BATCH_result = await masterQuery_Batch();
+    
+    var CDR_result = await get_CDR(data);
+    var PO_result = await masterQuery_product_ordered(data);
+    var result = [ PRODUCT_result, BATCH_result, CDR_result, PO_result ];
+
+    current_window.loadURL(url.format({
+        pathname: path.join(__dirname, '../views/salesView.html'),
+        protocol: 'file:',
+        slashes: true
+    }));
+
+    current_window.webContents.once('did-finish-load', function(){
+        current_window.webContents.send('sales:loadViewPage:redirect', result);
+    });
+
+    if (current_window.webContents.isLoading() == false){
+        current_window.webContents.send('sales:loadViewPage:redirect', result);
+    }
+
+});
+
+ipc.on('sales:UpdateSale', async function(event,data){
+
+    var current_CDR = data[2];
+    var update_CDR = masterUpdate_CDR(data[0], current_CDR);
+    var update_PO = masterUpdate_product_ordered(data[1], current_CDR);
+    
+    loadSalesMasterlist();
+
+});
+
+async function loadSalesMasterlist(){
+
+    var current_window = window.getFocusedWindow();
+
+    var result = await masterQuery_CDR();
+
+    current_window.loadURL(url.format({
+        pathname: path.join(__dirname, '../views/salesMasterlist.html'),
+        protocol: 'file:',
+        slashes: true
+    }));  
+
+    current_window.webContents.once('did-finish-load', function(){
+        current_window.webContents.send('sales:loadMasterlist:FrontEnd', result);
+    });
+
+    if (current_window.webContents.isLoading() == false){
+        current_window.webContents.send('sales:loadMasterlist:FrontEnd', result);
+    }
+
+}
+
+
+
+
+
 // GLOBAL
 
 ipc.on('go-back', function(event,data){
@@ -367,5 +602,19 @@ ipc.on('nav:inventory', function(event,data){
     getInventory();
     getManufacturers();
     getProduct();
+
+});
+
+ipc.on('nav:sales', function(event,data){
+
+    var current_window = window.getFocusedWindow();
+
+    loadSalesMasterlist();
+
+    current_window.loadURL(url.format({
+        pathname: path.join(__dirname, '../views/salesMasterlist.html'),
+        protocol: 'file:',
+        slashes: true
+    }));
 
 });

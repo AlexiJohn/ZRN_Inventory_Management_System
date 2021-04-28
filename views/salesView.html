@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <title>Inventory</title>
+    <link href="css/google-icon.css" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
+    <link href="css/zrn_custom.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+</head>
+<body>
+
+
+    <!-- SIDENAV -->
+
+    <div class="c_sidenav">
+        
+        <img id="biocorenavlogo" src="./images/Biocore_Logo_BlueWhite.png">
+          <a href="#" id="dashboardNav"> <img class = "navicon" src="./images/Dashboard Icon.png">Dashboard</a>
+          <a href="#" id="salesNav"> <img class = "navicon" src="./images/Sales Icon.png">Sales</a>
+          <a href="#" id="inventoryNav"> <img class = "navicon" src="./images/Inventory Icon.png">Inventory</a>
+          <a href="#" id="historyNav"> <img class = "navicon" src="./images/History Icon.png">History</a>
+          <a href="#" id="reportsNav"> <img class = "navicon" src="./images/Reports Icon.png">Reports</a>
+        
+          <div id = "timestamp"> 
+            10:50:25 AM
+            <div id = "datestamp">
+                SUN 10/12/2020
+            </div>
+        
+          </div>
+        
+    </div>
+
+    <!-- END OF SIDE NAV -->
+
+    <!-- MAIN CONTENT -->
+
+    <main>
+
+        <div class="container">
+
+            <!-- TITLES -->
+            <div class="row">
+                <h4 class="col s4">
+                    <i class="material-icons">arrow_back</i>
+                    Sales Details
+                </h4>
+            </div>
+
+            <div class="row">
+                <h5 class="col s5" id="cdr_no">CDR No. :
+                </h5>
+            </div>
+
+            <div class="row">
+                <div class="col s8">
+                    <table class="highlight centered mt">
+                        <thead class="zrn-background zrn-white-font round-thead">
+                            <tr>
+                                <!-- <th>Item No.</th> -->
+                                <th>Product</th>
+                                <th>Batch No.</th>
+                                <th>Expiry Date</th>
+                                <th>Quantity</th>
+                                <th>Unit Price</th>
+                                <th>Discount</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody_sales">
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="col s2 indigo lighten-5">
+                    <div class="row">
+                        <p class="col s12">Client Name</p>
+                    </div>
+                    <div class="row">
+                        <p class="col s12">Date Ordered</p>
+                    </div>
+                    <div class="row">
+                        <p class="col s12">Payment Option</p>
+                    </div>
+                    <div class="row">
+                        <p class="col s12">Due Date of Payment</p>
+                    </div> 
+                    <div class="row">
+                        <p class="col s12">Delivery Date</p>
+                    </div>
+                </div>
+
+                <div class="col s2">
+                    <div class="row">
+                        <p id="client_name" class="col s12">Client Name</p>
+                    </div>
+                    <div class="row">
+                        <p id="date_ordered" class="col s12">Date Ordered</p>
+                    </div>
+                    <div class="row">
+                        <p id="payment_option" class="col s12">Payment Option</p>
+                    </div>
+                    <div class="row">
+                        <p id="payment_duedate" class="col s12">Payment Duedate</p>
+                    </div> 
+                    <div class="row">
+                        <p id="delivery_date" class="col s12">Delivery Date</p>
+                    </div>
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </main>
+
+    <script type="text/javascript" src="js/materialize.min.js"></script>
+    <script src="./js/init.js"></script>
+    <script src="./res/salesView.js"></script>
+    <script src="./res/navbar.js"></script>
+</body>
+</html>

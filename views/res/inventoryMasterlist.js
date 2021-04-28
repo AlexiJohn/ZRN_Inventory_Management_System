@@ -357,6 +357,7 @@ ipc.on('inventory:getInventory:batch', function(event, data){
 
 
 // Dynamically update product select and manufacturer select
+
 $('#b_select_product').on('change',function(event){
 
     var select_product_ID = $("#b_select_product option:selected")[0].value;

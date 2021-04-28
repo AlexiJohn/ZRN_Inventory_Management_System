@@ -11,10 +11,12 @@ dashboardNav.addEventListener('click', function(){
 
 inventoryNav.addEventListener('click', function(){
     ipc.send('nav:inventory','data');
+    console.log('INVENTORY');
 });
 
 salesNav.addEventListener('click', function(){
-    
+    ipc.send('nav:sales','data');
+    console.log('SALES');
 });
 
 historyNav.addEventListener('click', function(){

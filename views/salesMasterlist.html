@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <title>Inventory</title>
+    <link href="css/google-icon.css" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
+    <link href="css/zrn_custom.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+</head>
+<body>
+
+    <!-- SIDENAV -->
+    <div class="c_sidenav">
+        
+        <img id="biocorenavlogo" src="./images/Biocore_Logo_BlueWhite.png">
+          <a href="#" id="dashboardNav"> <img class = "navicon" src="./images/Dashboard Icon.png">Dashboard</a>
+          <a href="#" id="salesNav"> <img class = "navicon" src="./images/Sales Icon.png">Sales</a>
+          <a href="#" id="inventoryNav"> <img class = "navicon" src="./images/Inventory Icon.png">Inventory</a>
+          <a href="#" id="historyNav"> <img class = "navicon" src="./images/History Icon.png">History</a>
+          <a href="#" id="reportsNav"> <img class = "navicon" src="./images/Reports Icon.png">Reports</a>
+        
+          <div id = "timestamp"> 
+            10:50:25 AM
+            <div id = "datestamp">
+                SUN 10/12/2020
+            </div>
+        
+          </div>
+        
+    </div>
+
+    <main>
+
+        <div class="container">
+
+        <div class="row">
+            <h4 class="col s2">Inventory </h4>
+
+            <div class="inline col s2 mt">
+                
+                <select name = "dateFilter" id = "dateFilter">
+                    <option value = "daily">Daily</option>
+                    <option value = "weekly">Weekly</option>
+                    <option value = "monthly">Monthly</option>
+                </select>
+
+            </div>
+            
+
+        </div>
+
+        <div class="row">
+
+            <div class="col s2">
+                <select name = "searchFilter" id = "searchFilter">
+                    <option value = "name">Name</option>
+                    <option value = "date">Date</option>
+                    <option value = "dateofdelivery">Date of Delivery</option>
+                    <option value = "manufacturer">Manufacturer</option>
+                    <option value = "expirationdate">Expiration Date</option>
+                </select>
+            </div>
+            <input class="col s2" type = "text" id = "filter" name = "filter">
+
+            <button class="waves-effect waves-light btn col s2 indigo darken-4">Search</button>	
+
+            <button id="addStock" class="waves-effect waves-light btn col s2 right indigo darken-4">Add Sale</button>
+
+        </div>
+
+        <div class="row">
+            <div class="col s12">
+                <table class="highlight centered mt">
+                    <thead class="zrn-background zrn-white-font round-thead">
+                        <tr>
+                            <th>DR no.</th>
+                            <th>Client Name</th>
+                            <th>Delivery Date</th>
+                            <th>Price</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody_sales">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        </div>
+    </main>
+
+    <!-- MODALS -->
+
+    <!-- END OF MODALS -->
+
+    <script type="text/javascript" src="js/materialize.min.js"></script>
+    <script src="./js/init.js"></script>
+    <script src="./res/salesMasterlist.js"></script>
+    <script src="./res/navbar.js"></script>
+</body>
+</html>

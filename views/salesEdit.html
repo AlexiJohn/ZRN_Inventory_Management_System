@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <title>Inventory</title>
+    <link href="css/google-icon.css" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
+    <link href="css/zrn_custom.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+</head>
+<body>
+
+    <!-- SIDENAV -->
+
+    <div class="c_sidenav">
+        
+        <img id="biocorenavlogo" src="./images/Biocore_Logo_BlueWhite.png">
+          <a href="#" id="dashboardNav"> <img class = "navicon" src="./images/Dashboard Icon.png">Dashboard</a>
+          <a href="#" id="salesNav"> <img class = "navicon" src="./images/Sales Icon.png">Sales</a>
+          <a href="#" id="inventoryNav"> <img class = "navicon" src="./images/Inventory Icon.png">Inventory</a>
+          <a href="#" id="historyNav"> <img class = "navicon" src="./images/History Icon.png">History</a>
+          <a href="#" id="reportsNav"> <img class = "navicon" src="./images/Reports Icon.png">Reports</a>
+        
+          <div id = "timestamp"> 
+            10:50:25 AM
+            <div id = "datestamp">
+                SUN 10/12/2020
+            </div>
+        
+          </div>
+        
+    </div>
+
+    <!-- END OF SIDE NAV -->
+
+    <!-- MAIN CONTENT -->
+
+    <main>
+
+        <div class="container">
+
+            <!-- TITLES -->
+            <div class="row">
+                
+                <h4 class="col s4">
+                    <i class="material-icons">arrow_back</i>
+                    Edit Sale 
+                </h4>
+    
+            </div>
+
+            <!-- MAIN CONTENT -->
+
+            <!-- FORM -->
+            <div class="row">
+            <form id="formSales" class="col s5">
+                <div>
+                    
+                    <div class="input-field">
+                        <label for="dr_no">Delivery Receipt Number</label>
+                        <input id="dr_no" name="dr_no" type="number"/>
+                    </div>
+
+                    <div class="input-field">
+                        <label for="sales_invoice_no" >Sales Invoice Number</label>
+                        <input id="sales_invoice_no" name="sales_invoice_no" type="number"/>
+                    </div>
+
+                    <!-- NAME FIELDS -->
+                    <div class="input-field">
+                        <label for="first_name">First Name</label>
+                        <input id="first_name" name="first_name" type="text"/>
+                    </div>
+
+                    <div class="input-field">
+                        <label for="middle_initial" >Middle Initial</label>
+                        <input id="middle_initial" name="middle_initial" type="text"/>
+                    </div>
+
+                    <div class="input-field">
+                        <label for="last_name" >Last Name</label>
+                        <input id="last_name" name="last_name" type="text"/>
+                    </div>
+                    
+                    <div class="input-field">
+                        <label for="suffix">Suffix</label>
+                        <input id="suffix" name="suffix" type="text"/>
+                    </div>
+                    <!-- END OF NAME FIELDS -->
+
+                    <div class="input-field">
+                        <label for="client_address">Client Address</label>
+                        <input id="client_address" name="client_address" type="text"/>
+                    </div>
+
+
+                    <div class="input-field">
+                        <label for="delivery_Date">Delivery Date</label>
+                        <input class="active" id="delivery_Date" name="delivery_Date" type="date" placeholder="mm/dd/yyyy"/>
+                    </div>
+
+                    <div id="div_select_mode_of_payment" name="product_name" class="input-field">
+                        <select id="select_payment">
+                            <option value="" disabled selected>Choose Mode of Payment</option>
+                            <option value="COD">COD</option>
+                            <option value="CHOD">CHOD</option>
+                            <option value="CHOD-30">CHOD-30</option>
+                        </select>
+                    </div>
+
+                    <div class="input-field">
+                        <label for="payment_duedate">Payment Due Date</label>
+                        <input class="active" id="payment_duedate" name="payment_duedate" type="date" placeholder="mm/dd/yyyy"/>
+                    </div>
+
+                    <div class="input-field">
+                        <label for="ordered_date">Order Date</label>
+                        <input class="active" id="ordered_date" name="ordered_date" type="date" placeholder="mm/dd/yyyy"/>
+                    </div>
+                    
+                    <div class="input-field">
+                        <label for="completion_date">Completion Date</label>
+                        <input class="active" id="completion_date" name="completion_date" type="date" placeholder="mm/dd/yyyy"/>
+                    </div>
+
+                    <div class="input-field">
+                        <label for="delivery_fee" >Delivery Fee</label>
+                        <input id="delivery_fee" name="delivery_fee" type="number" min="0" step="0.01"/>
+                    </div>
+
+                    <div class="input-field">
+                        <label for="booked_by">Booked by</label>
+                        <input id="booked_by" name="booked_by" type="text"/>
+                    </div>
+    
+                </div>
+            </form>
+            </div>
+            <!-- END OF FORM -->
+
+            <!-- PRODUCTS TABLE -->
+            <div class="row">
+                <p>Products Ordered</p>
+                <table class="highlight centered mt">
+                    <thead class="zrn-background zrn-white-font round-thead">
+                        <tr>
+                            <th>Item No.</th>
+                            <th>Product</th>
+                            <th>Batch No.</th>
+                            <th>Expiry Date</th>
+                            <th>Quantity</th>
+                            <th>Unit Price</th>
+                            <th>Discount</th>
+                            <th>Total</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody_products_list" >
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="row">
+                <button id="addNewStock" data-target="add_Product" class="modal-trigger waves-effect waves-light btn col s2 right indigo darken-4">Add Product</button>
+            </div>
+            <div class="row bottom-sale" style='background-color: #F0F4FF'>
+                <div class="col s12" >
+
+                        <div class="col s4 ">
+
+                        </div>
+                        <div class="col s4">
+                            <h5 id="text_TotalSales">
+                                Total: PHP 0
+                            </h5>
+                        </div>
+                        <div class="col s4 valign-wrapper">
+                            <button id="addNewSale" class="waves-effect waves-light btn col s6 right indigo darken-4">Submit</button>
+                        </div>
+                        
+                </div>
+            </div>
+        </div>
+        </div>
+    
+    </main>
+
+    <!-- END OF MAIN CONTENT -->
+    
+    <!-- MODALS -->
+
+    <!-- MODAL FOR NEW STOCK -->
+    <div id="add_Product" class="modal">
+        <div class="modal-content">
+            <h5 class="bold">Add New Product</h5>
+            <form id="formNewProduct" class="col s5">
+                <div>
+                    <div class="input-field">
+                        <label for="item_Quantity">Quantity</label>
+                        <input id="item_Quantity" name="item_Quantity" type="number"/>
+                    </div>
+
+                    <div id="div_item_select_product_name" name="item_product_name" class="input-field">
+                        <select id="item_select_product">
+                            <option value="" disabled selected>Choose Product</option>
+                        </select>
+                    </div>
+
+                    <div id="div_item_select_batch_name" name="item_batch_name" class="input-field">
+                        <select name="item_select_batch" id="item_select_batch">
+                            <option value="" disabled selected>Choose Batch</option>
+                        </select>
+                    </div>
+
+                    <div class="input-field">
+                        <label for="item_discount" >Discount (Percent)</label>
+                        <input id="item_discount" name="item_discount" type="number" min="0" step="0.01"/>
+                    </div>                  
+                </div>
+            </form>
+            <button id="addNewItemProduct" class="modal-close waves-effect waves-light btn col s2 right indigo darken-4" >Add Item</button>
+        </div>
+    </div>
+    <!-- END OF MODALS -->
+
+    <script type="text/javascript" src="js/materialize.min.js"></script>
+    <script src="./js/init.js"></script>
+    <script src="./res/salesEdit.js"></script>
+    <script src="./res/navbar.js"></script>
+</body>
+</html>
