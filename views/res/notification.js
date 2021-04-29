@@ -1,3 +1,5 @@
+// PROOF OF CONCEPT
+
 var notification_bar = document.getElementById('notifications');
 var notif_badge = document.getElementById('notif_badge');
 var notifs;

@@ -197,6 +197,39 @@ async function update_BATCH_bySTATUS(status, pk){
 
     return query_result;
 }
+
+async function get_SALE_byDate(date1, date2){
+    var query = `SELECT * FROM client_delivery_receipt WHERE ordered_date >= '${date1}' AND ordered_date <= '${date2}'`;
+
+    var query_result = await async_db.query(query);
+    
+    return query_result;
+}
+
+async function get_PRODUCTSORDERED_byCDR(list){
+
+    console.log(list.length);
+    var CDR_list = "";
+    if (list.length == 0){
+        CDR_list = "0";
+    } else {
+        for (i in list){
+            if (i == (list.length - 1)){
+                CDR_list += list[i].CDR_no;
+            } else {
+                CDR_list += list[i].CDR_no + ",";
+            }
+        }
+    }
+
+    
+    var query = `SELECT * FROM product_ordered WHERE CDR_no IN (${CDR_list})`;
+    console.log(query)
+    var query_result = await async_db.query(query);
+
+    return query_result;
+}
+
 // NOTIFICATIONS
 
 async function checkExpiry(batches){
@@ -210,15 +243,14 @@ async function checkExpiry(batches){
 
             var months = moment_batch.diff(moment_current,'months');
 
-
-            if ( months <= 0 ){
+            if ( months <= 0 && batches[i].status == "expiring"){
                 var check_lot_no = batches[i].lot_no;
                 var check_descript = "Expired Stock";
                 var check_notif_type = "expiring";
                 var update_batch_status = "expired";
                 var update_batch = await update_BATCH_bySTATUS(update_batch_status, check_lot_no);
                 var insert_notif = await masterInsert_notification(check_lot_no, check_descript, check_notif_type);
-            } else if( months < 6 ){
+            } else if( months < 6 && batches[i].status != "expiring"){
                 var check_lot_no = batches[i].lot_no;
                 var check_descript = "Stock will Expire";
                 var check_notif_type = "expiring";
@@ -231,6 +263,36 @@ async function checkExpiry(batches){
 
     return true;
 }
+
+// GENERATE REPORTS
+
+async function reports_generate(list){
+
+    // LIST has two dates
+
+    var sales_results = await get_SALE_byDate(list[0],list[1]);
+    var ordered_results = await get_PRODUCTSORDERED_byCDR(sales_results);
+
+    var result = [sales_results, ordered_results];
+
+    var current_window = window.getFocusedWindow();
+
+    current_window.webContents.once('did-finish-load', function(){
+        current_window.webContents.send('dashboard:receiveReports', result);
+    });
+
+    if (current_window.webContents.isLoading() == false){
+        current_window.webContents.send('dashboard:receiveReports', result);
+    }
+
+    return result;
+}
+
+ipc.on('dashboard:generateReports', async function(event,data){
+    
+    var generated_reports = await reports_generate(data);
+
+});
 
 // BATCHES
 
@@ -524,8 +586,6 @@ async function checkForThreshold(quantity, details){
 
 ipc.on('login', async function(event,data){
 
-    
-
     var current_window = window.getFocusedWindow();
 
     var notifs = await masterQuery_notification();
@@ -750,6 +810,7 @@ async function loadSalesMasterlist(){
     }
 
 }
+
 
 
 

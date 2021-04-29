@@ -75,19 +75,58 @@
             </div>
 
             <div class="row">
-                <div  class= "col s4">
+                <div  class= "col s3">
                     <h5>
                         <!-- <i class="material-icons">notifications</i> -->
-                        Generated Reports
+                        Report
                     </h5>
+                </div>
+
+                <div class= "col s4">
+                    <div class="input-field">
+                        <p class="col s2">From: </p>
+                        <input class="col s6" id="from_Date"  name="from_Date" type="date"/>
+                    </div>
+                </div>
+                <div class = "col s4">
+                    <div class="input-field">
+                        <p class="col s2">To: </p>
+                        <input class="col s6" id="to_Date"  name="to_Date" type="date"/>
+                    </div>
+                </div>
                 </div>
             </div>
 
             <div class="row">
-                    <div class=" col s12 indigo lighten-5 indigo-text text-lighten-5 indigo-text text-lighten-5">
-                        <h6>Low Stock</h6>
-                        <p>Product:</p>
-                        <p>Batch No:</p>
+                    <div class="container indigo lighten-5">
+                        <div class="container valign-wrapper">
+                            <h6 id="report_date_today">As of: </h6>
+                        </div>
+                        <div class="container valign-wrapper">
+                            <p id="report_sales">No. Sales: </p>
+                        </div>
+                        <div class="container valign-wrapper">
+                            <p id="report_total_sales">Total Sale: </p>
+                        </div>
+                        <div class="container valign-wrapper">
+                            <p id="Breakdown">Breakdown: </p>
+                        </div>
+                        <div class = "row">
+                            <table class="highlight centered mt">
+                                <thead class="zrn-background zrn-white-font round-thead">
+                                    <tr>
+                                        <th>CDR No</th>
+                                        <th>Product Name</th>
+                                        <th>Batch No</th>
+                                        <th>Quantity</th>
+                                        <th>Discount</th>
+                                        <th>Subtotal</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbody_products_ordered" >
+                                </tbody>
+                            </table>
+                         </div>
                     </div>
             </div>
 
