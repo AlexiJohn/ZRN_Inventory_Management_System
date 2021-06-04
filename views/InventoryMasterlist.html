@@ -19,7 +19,8 @@
           <a href="#" id="inventoryNav"> <img class = "navicon" src="./images/Inventory Icon.png">Inventory</a>
           <a href="#" id="historyNav"> <img class = "navicon" src="./images/History Icon.png">History</a>
           <a href="#" id="reportsNav"> <img class = "navicon" src="./images/Reports Icon.png">Reports</a>
-        
+          <a href="#" id="notificationNav"> <img class = "navicon" src="./images/Notification Icon.png">Notifications</a>
+          
           <div id = "timestamp"> 
             10:50:25 AM
             <div id = "datestamp">
@@ -84,6 +85,33 @@
                         </tr>
                     </thead>
                     <tbody id="tbody_inventory" >
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>
+                                <i class="material-icons red-text">warning</i> 1 
+                                <i class="material-icons yellow-text text-darken-1">warning</i> 1 
+                                <i class="material-icons orange-text text-darken-1">hourglass_empty</i> 1 
+                                <i class="material-icons grey-text text-darken-1">hourglass_empty</i> 1 
+                                <i class="material-icons green-text text-accent-4">check_circle</i>
+                            </td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>
+                                <i class="material-icons red-text">warning</i> Out Of Stock
+                                <i class="material-icons grey-text text-darken-1">hourglass_empty</i> Expired 
+                            </td>
+                            <td></td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -110,6 +138,7 @@
         </div>
 
     </div>
+
     <!-- MODAL FOR FOR NEW PRODUCT -->
     <div id="add_Product" class="modal">
         <div class="modal-content">
@@ -119,17 +148,20 @@
             
             <div class="input-field">
             <label for="product_name">Product Name</label>
-            <input id="product_name" name="product_name" type="text"/>
+            <input class="validate" id="product_name" name="product_name" type="text" required/>
+            <span id="product_nameHelper" class="helper-text" data-error="Invalid Input" data-success=""></span>
             </div>
 
             <div class="input-field">
                 <label for="batch_no" >Batch Number</label>
-                <input id="batch_no" name="batch_no" type="text"/>
+                <input class="validate" id="batch_no" name="batch_no" type="text" required/>
+                <span id="batch_noHelper" class="helper-text" data-error="Invalid Input" data-success=""></span>
             </div>
 
             <div class="input-field">
                 <label for="manufacturer_name">Manufacturer Name</label>
-                <input id="manufacturer_name" name="manufacturer_name" type="text" placeholder="Manufacturer Name"/>
+                <input class="validate" id="manufacturer_name" name="manufacturer_name" type="text" placeholder="Manufacturer Name" required/>
+                <span id="manufacturer_nameHelper" class="helper-text" data-error="Invalid Input" data-success=""></span>
             </div>
             
             <div id="selection_manu" class="input-field" style="display:none">
@@ -140,7 +172,7 @@
 
             <p>
             <label for="new_manu">
-                <input id="new_manu" name="new_manu" type="checkbox" checked="checked" class="filled-in"/>
+                <input id="new_manu" name="new_manu" type="checkbox" checked="checked" class="filled-in" required/>
                 <span>New Manufacturer?</span>
             </label>
             </p>
@@ -149,30 +181,32 @@
             <div class="input-field">
             
                 <label for="deliver_Date">Delivery Date</label>
-                <input class="active" id="delivery_Date" name="expiration_Date" type="date" placeholder="mm/dd/yyyy"/>
+                <input class="active" id="delivery_Date" name="expiration_Date" type="date" placeholder="mm/dd/yyyy" required/>
             </div>
             
             <div class="input-field">
             
                 <label for="expiration_Date">Expiration Date</label>
-                <input class="active" id="expiration_Date" name="expiration_Date" type="date" placeholder="mm/dd/yyyy"/>
+                <input class="active" id="expiration_Date" name="expiration_Date" type="date" placeholder="mm/dd/yyyy" required/>
             </div>
             
             <div class="input-field">
             
                 <label for="quantity">Quantity</label>
-                <input id="quantity" name="quantity" type="number"/>
+                <input class="validate" id="quantity" name="quantity" type="number" min="0" required/>
+                <span id="quantityHelper" class="helper-text" data-error="Invalid Input" data-success=""></span>
             </div>
             
             <div class="input-field">
-            
                 <label for="unit_price">Price</label>
-                <input id="unit_price" name="unit_price" type="number" step="any"/>
+                <input class="validate" id="unit_price" name="unit_price" type="number" step="any" min="0" required/>
+                <span id="unit_priceHelper" class="helper-text" data-error="Invalid Input" data-success=""></span>
             </div>
             
             <div class="input-field">
             <label for="threshold">Threshold</label>
-            <input id="threshold" name="threshold" type="number"/>
+            <input class="validate" id="threshold" name="threshold" type="number" min="0" required/>
+            <span id="thresholdHelper" class="helper-text" data-error="Invalid Input" data-success=""></span>
             </div>
 
             <button id="addProduct" type="submit" class="modal-close waves-effect waves-light btn">Add Product</button>

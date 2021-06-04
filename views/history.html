@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <title>Inventory</title>
+    <link href="css/google-icon.css" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
+    <link href="css/zrn_custom.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+</head>
+<body>
+
+    <div class="c_sidenav">
+        
+        <img id="biocorenavlogo" src="./images/Biocore_Logo_BlueWhite.png">
+          <a href="#" id="dashboardNav"> <img class = "navicon" src="./images/Dashboard Icon.png">Dashboard</a>
+          <a href="#" id="salesNav"> <img class = "navicon" src="./images/Sales Icon.png">Sales</a>
+          <a href="#" id="inventoryNav"> <img class = "navicon" src="./images/Inventory Icon.png">Inventory</a>
+          <a href="#" id="historyNav"> <img class = "navicon" src="./images/History Icon.png">History</a>
+          <a href="#" id="reportsNav"> <img class = "navicon" src="./images/Reports Icon.png">Reports</a>
+          <a href="#" id="notificationNav"> <img class = "navicon" src="./images/Notification Icon.png">Notifications </a>
+        
+          <div id = "timestamp"> 
+            10:50:25 AM
+            <div id = "datestamp">
+                SUN 10/12/2020
+            </div>
+        
+          </div>
+        
+    </div>
+
+    <main>
+
+        <div class="container">
+
+            <div class="row">
+                
+                <h4 class="col s4">
+                    History
+                </h4>
+    
+            </div>
+
+            <div class="row">
+                <div class="row">
+                <h6>Display Activity Log</h6>
+                <div class= "col s4">
+                    <div class="input-field">
+                        <p class="col s2">From: </p>
+                        <input class="col s6" id="from_Date"  name="from_Date" type="date"/>
+                    </div>
+                </div>
+                <div class = "col s4">
+                    <div class="input-field">
+                        <p class="col s2">To: </p>
+                        <input class="col s6" id="to_Date"  name="to_Date" type="date"/>
+                    </div>
+                </div>
+                </div>
+            </div>
+
+            <div id="cards">
+
+            </div>
+
+        
+        </div>
+
+    </main>
+
+    <script type="text/javascript" src="js/materialize.min.js"></script>
+    <script src="./js/init.js"></script>
+    <script src="./res/history.js"></script>
+    <script src="./res/navbar.js"></script>
+</body>
+</html>

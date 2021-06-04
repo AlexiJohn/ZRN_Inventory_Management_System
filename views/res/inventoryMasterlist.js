@@ -1,6 +1,6 @@
 const electron = require('electron');
 const ipc = electron.ipcRenderer;
-
+const moment = require('moment');
 const $ = require( "jquery" );
 
 var product;
@@ -9,6 +9,9 @@ var tbody = document.getElementById('tbody_inventory');
 
 var manufacturer_name;
 
+var validated_product;
+var validated_batch;
+
 $(document).ready(function() {
     M.updateTextFields();
 });
@@ -16,15 +19,20 @@ $(document).ready(function() {
 var check = document.querySelector('#new_manu');
 check.addEventListener("click", changeInput);
 
-const formProduct = document.querySelector('#formproduct');
-formProduct.addEventListener('submit', submitFormProduct);
+const buttonformProduct = document.querySelector('#addProduct');
+buttonformProduct.addEventListener('click', submitFormProduct);
 
+const formProduct = document.querySelector('#formproduct');
 const formBatch = document.querySelector('#formbatch');
-formBatch.addEventListener('submit', submitFormBatch);
+
+const buttonformBatch = document.querySelector('#addBatch');
+buttonformBatch.addEventListener('click', submitFormBatch);
 
 // NEW PRODUCT
 
 function submitFormProduct(e){
+    
+    console.log("CLICKED")
 
     e.preventDefault();
 
@@ -51,11 +59,13 @@ function submitFormProduct(e){
 function send_data (data){
 
     if (check.checked == true){
+        console.log(check.checked)
         ipc.send('batch:add', data);
         formProduct.reset();
         formBatch.reset();
     } else {
         ipc.send('batch:existingManu',data);
+        console.log(check.checked)
         formProduct.reset();
         formBatch.reset();
     }
@@ -121,11 +131,13 @@ function submitFormBatch(e){
 ipc.on('batch:getManuList', function(event,data){
 
     var manu_list = data;
+    var select_mn = document.getElementById('b_select_manu');
+    select_mn.innerHTML = '<option value="" disabled selected>Choose Manufacturer</option>'
 
     for (i = 0; i < manu_list.length; i++) {
 
         var row_mn = data[i];
-        var select_mn = document.getElementById('b_select_manu');
+        
         var option_mn = document.createElement("option");
         option_mn.value = row_mn.manufacturer_ID;
         option_mn.innerText = row_mn.manufacturer_name;
@@ -161,11 +173,12 @@ ipc.on('batch:getProductList', function(event,data){
 ipc.on('batch:getManuList', function(event,data){
 
     var manu_list = data;
-
+    var select_m = document.getElementById('select_manu');
+    select_m.innerHTML = `<option value="" disabled selected>Choose Manufacturer</option>`
     for (i = 0; i < manu_list.length; i++) {
 
         var row_m = data[i];
-        var select_m = document.getElementById('select_manu');
+        
         var option_m = document.createElement("option");
         option_m.value = row_m.manufacturer_ID;
         option_m.innerText = row_m.manufacturer_name; 
@@ -279,6 +292,7 @@ ipc.on('inventory:getInventory:product', function(event,data){
         td_Starting_Inventory.innerText = current_row.quantity_sum;
         td_Offtake.innerText = 0;
         td_Ending_Inventory.innerText = current_row.quantity_sum;
+        td_Status.id = current_row.product_ID + "_product_ID_Status" 
         
         td_button.innerText = 'View';
         td_button.className = "waves-effect waves-light btn";
@@ -307,6 +321,16 @@ ipc.on('inventory:getInventory:batch', function(event, data){
 
     var current_row;
     batch = data;
+
+    var icon_out_of_stock = `<i class="material-icons red-text">warning</i> Out of Stock `
+    var icon_low_stock = `<i class="material-icons yellow-text text-darken-1">warning</i> Low Stock `
+    var icon_expiring = `<div class="col s12">
+    <i class="material-icons orange-text text-darken-1">hourglass_empty</i> Expiring
+    </div>`
+    var icon_expired = `<div class="col s12">
+    <i class="material-icons grey-text text-darken-1">hourglass_empty</i> Expired
+    </div>` 
+    var icon_good = `<i class="material-icons green-text text-accent-4">check_circle</i> Available`
 
     for ( i=0; i < batch.length; i++){
 
@@ -340,6 +364,22 @@ ipc.on('inventory:getInventory:batch', function(event, data){
         td_button.classList.add("darken-4");
         td_button.classList.add("view-batch");
 
+        if (current_row.status == "good" && current_row.status2 == "good"){
+            td_Status.innerHTML = icon_good;
+        } 
+        else if (current_row.status == "expiring") {
+            td_Status.innerHTML += icon_expiring
+        }
+        else if (current_row.status == "expired") {
+            td_Status.innerHTML += icon_expired
+        }
+        if (current_row.status2 == "low_stock") {
+            td_Status.innerHTML += icon_low_stock
+        }
+        else if (current_row.status2 == "out_of_stock") {
+            td_Status.innerHTML += icon_out_of_stock
+        } 
+
         tr_main.appendChild(td_product_name);
         tr_main.appendChild(td_current_inventory);
         tr_main.appendChild(td_Starting_Inventory);
@@ -353,6 +393,7 @@ ipc.on('inventory:getInventory:batch', function(event, data){
 
     };
 
+    icons_status();
 });
 
 
@@ -383,4 +424,142 @@ function instances_init(){
     var elems = document.querySelectorAll('select');
     var options = {};
     var instances = M.FormSelect.init(elems, options);
+}
+
+function validate_newProduct(){
+
+    var product_name = document.querySelector('#product_name');
+    var batch_no = document.querySelector('#batch_no');
+    var delivery_Date = document.querySelector('#delivery_Date');
+    var expiration_Date = document.querySelector('#expiration_Date');
+    var quantity = document.querySelector('#quantity');
+    var unit_price = document.querySelector('#unit_price');
+    var threshold = document.querySelector('#threshold');
+
+    var inputlist = [
+        product_name,
+        batch_no,
+        quantity,
+        unit_price,
+        threshold,
+    ]
+
+    var format = /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+
+    var validity = true;
+
+    for (i of inputlist){
+        if(i.value==""){
+            console.log(i.id)
+            var helper = document.getElementById(i.id+"Helper")
+            helper.classList.remove('valid');
+            helper.classList.add('invalid');
+        } else {
+            var helper = document.getElementById(i.id+"Helper")
+            helper.classList.remove('invalid');
+            helper.classList.add('valid');
+            validity = false;
+        }
+    }
+    
+    if (batch_no.value.match(format)){
+        var helper = document.getElementById(batch_no.id+"Helper")
+        helper.classList.remove('valid');
+        helper.classList.add('invalid');
+    } else {
+        var helper = document.getElementById(i.id+"Helper")
+        helper.classList.remove('invalid');
+        helper.classList.add('valid');
+        validity = false;
+    }
+
+    M.updateTextFields();
+
+    return validity;
+
+}
+
+// $.validator.setDefaults({
+//     errorClass: 'invalid',
+//     validClass: "valid",
+//     errorPlacement: function(error, element) {
+//       $(element)
+//         .closest("form")
+//         .find("label[for='" + element.attr("id") + "']")
+//         .attr('data-error', error.text());
+//     },
+//     submitHandler: function(form) {
+//       console.log('form ok');
+//     }
+//   });
+
+
+// $("#formproduct").validate({
+// rules: {
+//     dateField: {
+//     date: true
+//     }
+// }
+// });
+
+var all_product;
+var all_batch;
+
+ipc.on('inventory:icons', function(event,data){
+
+    all_product = data.products
+    all_batch = data.batches
+});
+
+function icons_status(){
+    var product_out_of_stock = `<i class="material-icons red-text">warning</i> `
+    var product_low_stock = `<i class="material-icons yellow-text text-darken-1">warning</i> `
+    var product_expiring = `<i class="material-icons orange-text text-darken-1">hourglass_empty</i> `  
+    var product_expired = `<i class="material-icons grey-text text-darken-1">hourglass_empty</i> `  
+    var product_good = `<i class="material-icons green-text text-accent-4">check_circle</i> `
+
+    var statuses = []
+    for (i of all_product) {
+        var current_status = {
+            product_ID: i.product_ID,
+            low_stock: 0,
+            out_of_stock: 0,
+            expiring: 0,
+            expired: 0,
+            good: 0,
+        }
+
+        for (ii of all_batch) {
+            if (i.product_ID == ii.product_ID){
+                current_status[ii.status] += 1;
+                current_status[ii.status2] += 1;
+            }
+        }
+
+        statuses.push(current_status);
+        console.log(statuses)
+    }
+
+    for (i of statuses){
+        console.log(i.product_ID + "HERE")
+        var td_statuses = document.getElementById(i.product_ID+"_product_ID_Status");
+        td_statuses.innerHTML = ""
+        var status_good = i.low_stock + i.out_of_stock + i.expiring + i.expired
+        if(status_good == 0){
+            td_statuses.innerHTML = product_good;
+        }
+        if(i.low_stock > 0){
+            td_statuses.innerHTML += product_low_stock + i.low_stock
+        }
+        if(i.out_of_stock > 0){
+            td_statuses.innerHTML += product_out_of_stock + i.out_of_stock
+        }
+        if(i.expiring > 0){
+            td_statuses.innerHTML += product_expiring + i.expiring
+        }
+        if(i.expired > 0){
+            td_statuses.innerHTML += product_expired + i.expired
+        }
+    }
+
 }

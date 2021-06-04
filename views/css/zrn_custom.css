@@ -202,3 +202,17 @@ body{
   font-family: 'Nunito', sans-serif;
   color: #061D54;
 }
+
+
+.fixed-width-card {
+  width: 300px;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.horizontal-flex{
+  display: flex;
+  flex-direction: row;
+  flex-flow: row;
+  width: max-content
+}

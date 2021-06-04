@@ -21,7 +21,8 @@
           <a href="#" id="inventoryNav"> <img class = "navicon" src="./images/Inventory Icon.png">Inventory</a>
           <a href="#" id="historyNav"> <img class = "navicon" src="./images/History Icon.png">History</a>
           <a href="#" id="reportsNav"> <img class = "navicon" src="./images/Reports Icon.png">Reports</a>
-        
+          <a href="#" id="notificationNav"> <img class = "navicon" src="./images/Notification Icon.png">Notifications</a>
+          
           <div id = "timestamp"> 
             10:50:25 AM
             <div id = "datestamp">
@@ -44,7 +45,6 @@
             <div class="row">
                 
                 <h4 class="col s4">
-                    <i class="material-icons">arrow_back</i>
                     Edit Sale 
                 </h4>
     
@@ -54,39 +54,46 @@
 
             <!-- FORM -->
             <div class="row">
-            <form id="formSales" class="col s5">
-                <div>
+            <form id="formSales">
+                <div class="col s6">
                     
                     <div class="input-field">
                         <label for="dr_no">Delivery Receipt Number</label>
-                        <input id="dr_no" name="dr_no" type="number"/>
+                        <input class="validate" required id="dr_no" name="dr_no" type="number"/>
+                        <span class="helper-text" data-error="Invalid Input" data-success=""></span>
                     </div>
 
                     <div class="input-field">
                         <label for="sales_invoice_no" >Sales Invoice Number</label>
-                        <input id="sales_invoice_no" name="sales_invoice_no" type="number"/>
+                        <input class="validate" required id="sales_invoice_no" name="sales_invoice_no" type="number"/>
+                        <span class="helper-text" data-error="Invalid Input" data-success=""></span>
                     </div>
 
                     <!-- NAME FIELDS -->
-                    <div class="input-field">
-                        <label for="first_name">First Name</label>
-                        <input id="first_name" name="first_name" type="text"/>
-                    </div>
-
-                    <div class="input-field">
-                        <label for="middle_initial" >Middle Initial</label>
-                        <input id="middle_initial" name="middle_initial" type="text"/>
-                    </div>
-
-                    <div class="input-field">
-                        <label for="last_name" >Last Name</label>
-                        <input id="last_name" name="last_name" type="text"/>
+                    <div class="row">
+                        <div class="input-field col s3">
+                            <label for="first_name">First Name</label>
+                            <input class="validate" id="first_name" name="first_name" type="text"/>
+                            <span class="helper-text" data-error="Invalid Input" data-success=""></span>
+                        </div>
+    
+                        <div class="input-field col s3">
+                            <label for="middle_initial" >Middle Initial</label>
+                            <input id="middle_initial" name="middle_initial" type="text"/>
+                        </div>
+    
+                        <div class="input-field col s3">
+                            <label for="last_name" >Last Name</label>
+                            <input class="validate" id="last_name" name="last_name" type="text"/>
+                            <span class="helper-text" data-error="Invalid Input" data-success=""></span>
+                        </div>
+                        
+                        <div class="input-field col s3">
+                            <label for="suffix">Suffix</label>
+                            <input id="suffix" name="suffix" type="text"/>
+                        </div>
                     </div>
                     
-                    <div class="input-field">
-                        <label for="suffix">Suffix</label>
-                        <input id="suffix" name="suffix" type="text"/>
-                    </div>
                     <!-- END OF NAME FIELDS -->
 
                     <div class="input-field">
@@ -94,13 +101,17 @@
                         <input id="client_address" name="client_address" type="text"/>
                     </div>
 
+                </div>
 
+                <div class="col s6">
+
+                    
                     <div class="input-field">
                         <label for="delivery_Date">Delivery Date</label>
                         <input class="active" id="delivery_Date" name="delivery_Date" type="date" placeholder="mm/dd/yyyy"/>
                     </div>
 
-                    <div id="div_select_mode_of_payment" name="product_name" class="input-field">
+                    <div id="div_select_mode_of_payment" name="product_name" class="input-field" style="margin-top: 32px;">
                         <select id="select_payment">
                             <option value="" disabled selected>Choose Mode of Payment</option>
                             <option value="COD">COD</option>
@@ -109,31 +120,38 @@
                         </select>
                     </div>
 
-                    <div class="input-field">
+                    <div class="input-field" style="margin-top: 56px;">
                         <label for="payment_duedate">Payment Due Date</label>
                         <input class="active" id="payment_duedate" name="payment_duedate" type="date" placeholder="mm/dd/yyyy"/>
                     </div>
 
-                    <div class="input-field">
+                    <div class="input-field" style="margin-top: 55px;">
                         <label for="ordered_date">Order Date</label>
                         <input class="active" id="ordered_date" name="ordered_date" type="date" placeholder="mm/dd/yyyy"/>
                     </div>
-                    
-                    <div class="input-field">
-                        <label for="completion_date">Completion Date</label>
-                        <input class="active" id="completion_date" name="completion_date" type="date" placeholder="mm/dd/yyyy"/>
+
+                </div>
+
+                
+                <div class="row">
+                    <div class="row">
+                        <hr class="col s12">
                     </div>
 
-                    <div class="input-field">
+                    <div class="input-field col s6">
                         <label for="delivery_fee" >Delivery Fee</label>
                         <input id="delivery_fee" name="delivery_fee" type="number" min="0" step="0.01"/>
                     </div>
 
-                    <div class="input-field">
+                    <div class="input-field col s6">
                         <label for="booked_by">Booked by</label>
                         <input id="booked_by" name="booked_by" type="text"/>
                     </div>
-    
+
+                    <div class="input-field col s6">
+                        <label for="completion_date">Completion Date</label>
+                        <input class="active" id="completion_date" name="completion_date" type="date" placeholder="mm/dd/yyyy"/>
+                    </div>
                 </div>
             </form>
             </div>

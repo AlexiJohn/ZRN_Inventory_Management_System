@@ -20,7 +20,6 @@ ipc.on('sales:loadAddNewSale:redirect', function(event,data){
 
 });
 
-
 // FUNCTIONS
 
 function populateProductOptions(products) {
@@ -138,6 +137,8 @@ function redoItemNo(){
 
 // BUTTON LISTENERS
 
+var item_batch_row;
+var current_batch;
 $('#item_select_product').on('change',function(event){
 
     var select_product_ID = $("#item_select_product option:selected")[0].value;
@@ -160,7 +161,7 @@ $('#item_select_product').on('change',function(event){
             var option_product_batches = document.createElement("option");
             option_product_batches.value = row_product_batches[i].lot_no;
             option_product_batches.innerText = row_product_batches[i].batch_no;
-
+            current_batch = row_product_batches[i];
             select_product_batches.appendChild(option_product_batches);
 
             instances_init();
@@ -182,7 +183,7 @@ $('#addNewItemProduct').on('click', function(){
     var item_batch = document.getElementById('item_select_batch').selectedOptions[0].innerText;
     var item_batch_lot_no = document.getElementById('item_select_batch').selectedOptions[0].value;
 
-    var item_batch_row;
+    
     for (i = 0; i < batches.length; i++){
         if (batches[i].lot_no == item_batch_lot_no){
             item_batch_row = batches[i];
@@ -287,6 +288,19 @@ $('#addNewSale').on('click', function(){
     M.updateTextFields();
 
 });
+
+$('#item_select_batch').on('change', function(){
+    var batch_value = document.getElementById('item_select_batch').selectedOptions[0].value;
+    for (i of batches){
+        if (i.lot_no == batch_value){
+            current_batch = i;
+        }
+    }
+    var div_details = document.getElementById("stock_details")
+    div_details.innerHTML = `<p class="col s4">Unit Price: ${Number(current_batch.unit_price).toLocaleString()}</p>
+    <p class="col s4">Current Stock: ${Number(current_batch.quantity).toLocaleString()}</p>
+    <p class="col s4">Threshold: ${Number(current_batch.threshold).toLocaleString()}</p>`;
+});
 // Other Functions
 
 function instances_init(){
@@ -294,3 +308,26 @@ function instances_init(){
     var options = {};
     var instances = M.FormSelect.init(elems, options);
 }
+
+$.validator.setDefaults({
+    errorClass: 'invalid',
+    validClass: "valid",
+    errorPlacement: function(error, element) {
+      $(element)
+        .closest("form")
+        .find("label[for='" + element.attr("id") + "']")
+        .attr('data-error', error.text());
+    },
+    submitHandler: function(form) {
+      console.log('form ok');
+    }
+  });
+
+
+$("#formbatch").validate({
+rules: {
+    dateField: {
+    date: true
+    }
+}
+});

@@ -19,7 +19,8 @@
           <a href="#" id="inventoryNav"> <img class = "navicon" src="./images/Inventory Icon.png">Inventory</a>
           <a href="#" id="historyNav"> <img class = "navicon" src="./images/History Icon.png">History</a>
           <a href="#" id="reportsNav"> <img class = "navicon" src="./images/Reports Icon.png">Reports</a>
-        
+          <a href="#" id="notificationNav"> <img class = "navicon" src="./images/Notification Icon.png">Notifications</a>
+          
           <div id = "timestamp"> 
             10:50:25 AM
             <div id = "datestamp">
@@ -167,6 +168,7 @@
                 <div class="input-field">
                 <label for="batch_no" >Batch Number</label>
                 <input id="batch_no" name="batch_no" type="text"/>
+                <span required class="helper-text" data-error="Invalid Input" data-success=""></span>
                 </div>
 
                 <div class="input-field">
@@ -177,26 +179,31 @@
                 <div class="input-field">
                 <label for="delivery_Date">Delivery Date</label>
                 <input id="delivery_Date" name="delivery_Date" type="date"/>
+                <span required class="helper-text" data-error="Invalid Input" data-success=""></span>
                 </div>
 
                 <div class="input-field">
                 <label for="expiration_Date">Expiration Date</label>
                 <input id="expiration_Date"  name="expiration_Date" type="date"/>
+                <span required class="helper-text" data-error="Invalid Input" data-success=""></span>
                 </div>
 
                 <div class="input-field">
                 <label for="quantity">Quantity</label>
-                <input id="quantity" name="quantity" type="number"/>
+                <input required min="1" class="validate" id="quantity" name="quantity" type="number"/>
+                <span required class="helper-text" data-error="Invalid Input" data-success=""></span>
                 </div>
 
                 <div class="input-field">
                 <label for="unit_price">Price</label>
                 <input id="unit_price" name="unit_price" type="number" step="any"/>
+                <span class="helper-text" data-error="Invalid Input" data-success=""></span>
                 </div>
 
                 <div class="input-field"> 
                 <label for="threshold">Threshold</label>
                 <input id="threshold" name="threshold" type="number"/>
+                <span class="helper-text" data-error="Invalid Input" data-success=""></span>
                 </div>
 
             </div>

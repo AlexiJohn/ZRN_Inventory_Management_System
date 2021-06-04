@@ -142,4 +142,36 @@ function autoFillModal(fields){
     M.updateTextFields();
 }
 
+function validation(){
 
+    var batch_no = $('#id_batch_no');
+    var delivery_date = $('#id_delivery_date');
+    var expiration_date = $('#id_expiration_date');
+    var unit_price = $('#id_unit_price');
+    var quantity = $('#id_quantity');
+    var threshold = $('#id_threshold');
+
+}
+
+$.validator.setDefaults({
+    errorClass: 'invalid',
+    validClass: "valid",
+    errorPlacement: function(error, element) {
+      $(element)
+        .closest("form")
+        .find("label[for='" + element.attr("id") + "']")
+        .attr('data-error', error.text());
+    },
+    submitHandler: function(form) {
+      console.log('form ok');
+    }
+  });
+
+
+$("#formbatch").validate({
+rules: {
+    dateField: {
+    date: true
+    }
+}
+});

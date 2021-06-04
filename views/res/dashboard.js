@@ -13,7 +13,7 @@ var now = moment().format('YYYY-MM-DD');
 
 M.updateTextFields();
 
-from_date.value = now;
+from_date.value = moment().subtract(7,'days').format('YYYY-MM-DD');
 to_date.value = now;
 
 function query(){
@@ -21,57 +21,68 @@ function query(){
     var date1 = from_date.value;
     var date2 = to_date.value;
 
-    ipc.send('dashboard:generateReports',[date1,date2]);
+    ipc.send('dashboard:generateReport', [date1,date2]);
 
 }
 
-query();
+var pending;
+var total_pending;
+var total_complete;
+var total_ordered;
+var top_performing;
 
-ipc.on('dashboard:receiveReports', function(event, data){
+ipc.on('dashboard:onload', function(event, data){
+    
+    pending = data.pending
+    total_pending = data.total_pending;
+    total_complete = data.total_completed;
+    total_ordered = data.total_ordered;
+    top_performing = data.top_performing;
+    console.log(data)
+    pending_orders()
+    generateReports();
+});
 
-    var report_date_today = document.getElementById('report_date_today');
-    var report_sales = document.getElementById('report_sales');
-    var report_total_sales = document.getElementById('report_total_sales');
+function pending_orders(){
 
-    report_date_today.innerHTML = "As of: " + moment().format("MMM DD, YYYY");
-    var number_sales = data[0].length;
-    var total_sales = 0;
-    for (i in data[0]){
-        console.log(data[0][i].total)
-        total_sales += data[0][i].total;
+    var div_pending_orders = document.getElementById("pending_orders");
+    div_pending_orders.innerHTML = "";
+
+    for (i of pending) {
+        div_pending_orders.innerHTML += `
+            <div class="fixed-width-card">
+                <div class="card white">
+                  <div class="card-content">
+                    <p style="font-size: small;">${moment(i.delivery_date, "ddd MMM DD YYYY HH:mm:ss").format('MMM DD, YYYY')}</p>
+                    <p style="font-size: x-large; font-weight: bold;">${i.first_name} ${i.last_name}</p>
+                    <p style="font-size: x-large;">DR# ${i.CDR_no}</p>
+                    <p style="font-size: medium;">Total Order Volume: ${Number(i.quantity).toLocaleString()}</p>
+                    <p style="font-size: x-large; font-weight: bold;">PHP ${Number(i.total).toLocaleString()}</p>
+                  </div>
+                </div>
+            </div>`;
     }
+}
 
-    report_sales.innerHTML = "No. Sales: " + number_sales;
-    report_total_sales.innerHTML = "Total Sale: " + total_sales;
+function generateReports(){
+    var p_completed_orders = document.getElementById("completed_deliveries");
+    var p_pending_orders = document.getElementById("pending_deliveries");
+    var p_total_sales = document.getElementById("total_sales");
+    var tbody_top_performing = document.getElementById("tbody_top");
 
-    var tbody = document.getElementById("tbody_products_ordered");
-    tbody.innerHTML = "";
-    for (i in data[1]){
-        var tr_main = document.createElement('tr');
-        var td_CDR_no = document.createElement('td');
-        var td_product_name = document.createElement('td');
-        var td_batch_no = document.createElement('td');
-        var td_quantity = document.createElement('td');
-        var td_discount = document.createElement('td');
-        var td_subtotal = document.createElement('td');
+    p_completed_orders.innerHTML = `${total_complete[0].CDR_no} Deliveries`;
+    p_pending_orders.innerHTML = `${total_pending[0].CDR_no} Deliveries`;
+    p_total_sales.innerHTML = `PHP ${Number(total_ordered[0].total).toLocaleString()}`;
 
-        td_CDR_no.innerHTML = data[1][i].CDR_no;
-        td_product_name.innerHTML = data[1][i].product_name;
-        td_batch_no.innerHTML = data[1][i].batch_no;
-        td_quantity.innerHTML = data[1][i].quantity;
-        td_discount.innerHTML = (data[1][i].discount * 100) + "%";
-        td_subtotal.innerHTML = "PHP " + Number(data[1][i].subtotal).toLocaleString();
-
-        tr_main.appendChild(td_CDR_no);
-        tr_main.appendChild(td_product_name);
-        tr_main.appendChild(td_batch_no);
-        tr_main.appendChild(td_quantity);
-        tr_main.appendChild(td_discount);
-        tr_main.appendChild(td_subtotal);
-        tbody.appendChild(tr_main);
+    tbody_top_performing.innerHTML = "";
+    for(i of top_performing){
+        tbody_top_performing.innerHTML += `<tr>
+        <td>${i.product_name}</td>
+        <td>${moment(i.expiration_Date, "ddd MMM DD YYYY HH:mm:ss").format('MMM DD, YYYY')}</td>
+        <td>${i.unit_price}</td>
+        <td>${i.quantity}</td>
+    </tr>`;
     }
     
-
-
-});
+}
 

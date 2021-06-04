@@ -19,6 +19,7 @@
           <a href="#" id="inventoryNav"> <img class = "navicon" src="./images/Inventory Icon.png">Inventory</a>
           <a href="#" id="historyNav"> <img class = "navicon" src="./images/History Icon.png">History</a>
           <a href="#" id="reportsNav"> <img class = "navicon" src="./images/Reports Icon.png">Reports</a>
+          <a href="#" id="notificationNav"> <img class = "navicon" src="./images/Notification Icon.png">Notifications</a>
         
           <div id = "timestamp"> 
             10:50:25 AM
@@ -48,28 +49,17 @@
 
             <div class="row">
 
-                <div  class= "col s4">
-                    <h5>
-                        <!-- <i class="material-icons">notifications</i> -->
-                        Notifications
-                        <span id="notif_badge" class="new badge"></span>
-                    </h5>
-                    <div id="notifications" class="dashboard-scroll">
-                    </div>
-                    
-                </div>
-
-                <div class= "col s7" style="margin-left: 10px;">
+                <div class= "col s12" style="margin-left: 10px;">
                     <h5>
                         Pending Orders
                     </h5>
-                    <div class="row">
-                        <div class="col s12 indigo lighten-5 indigo-text text-lighten-5">
-                            <h6>Low Stock</h6>
-                            <p>Product:</p>
-                            <p>Batch No:</p>
+                    
+                    <div style="overflow-x: scroll;">
+                        <div id="pending_orders" class="horizontal-flex">
+
                         </div>
                     </div>
+                        
                 </div>
 
             </div>
@@ -97,37 +87,59 @@
                 </div>
             </div>
 
-            <div class="row">
-                    <div class="container indigo lighten-5">
-                        <div class="container valign-wrapper">
-                            <h6 id="report_date_today">As of: </h6>
+            <div class="container">
+                <div class="row">
+
+                    <div class="col s4 m4">
+                        <div class="row">
+                            <div class="col s12">
+                                <div class="card white">
+                                  <div class="card-content">
+                                      <p style="font-size: x-large; font-weight: bold;">Total Completed Orders</p>
+                                      <p id="completed_deliveries">240 Deliveries</p>
+                                  </div>
+                                </div>
+                              </div>
                         </div>
-                        <div class="container valign-wrapper">
-                            <p id="report_sales">No. Sales: </p>
+                        <div class="row" style="margin-top: 10px;">
+                            <div class="col s12">
+                                <div class="card white">
+                                  <div class="card-content">
+                                      <p style="font-size: x-large; font-weight: bold;">Total Pending Orders</p>
+                                      <p id="pending_deliveries">40 Deliveries</p>
+                                  </div>
+                                </div>
+                              </div>
                         </div>
-                        <div class="container valign-wrapper">
-                            <p id="report_total_sales">Total Sale: </p>
+                        <div class="row" style="margin-top: 10px;">
+                            <div class="col s12">
+                                <div class="card white">
+                                  <div class="card-content">
+                                      <p style="font-size: x-large; font-weight: bold;">Total Sales</p>
+                                      <p id="total_sales">PHP 1,000,000</p>
+                                  </div>
+                                </div>
+                              </div>
                         </div>
-                        <div class="container valign-wrapper">
-                            <p id="Breakdown">Breakdown: </p>
-                        </div>
-                        <div class = "row">
-                            <table class="highlight centered mt">
-                                <thead class="zrn-background zrn-white-font round-thead">
-                                    <tr>
-                                        <th>CDR No</th>
-                                        <th>Product Name</th>
-                                        <th>Batch No</th>
-                                        <th>Quantity</th>
-                                        <th>Discount</th>
-                                        <th>Subtotal</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tbody_products_ordered" >
-                                </tbody>
-                            </table>
-                         </div>
                     </div>
+
+                    <div class="col s8 m8">
+                        <p style="font-size: x-large; font-weight: bold;">Top Performing Products</p>
+                        <table class="highlight centered mt">
+                            <thead class="zrn-background zrn-white-font round-thead">
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Expiry Date</th>
+                                    <th>Unit Price</th>
+                                    <th>Total Orders</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody_top">
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
 
             
